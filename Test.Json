@@ -1,0 +1,902 @@
+{
+    "reportDefinition": {
+      "reportId": "NII_PROJECTIONS",
+      "reportName": "NII Projections Report",
+      "reportVersion": "1.0",
+      "outputFileName": "NII_Report_Generated.xlsx",
+      "templateSource": "CLASSPATH",
+      "templateFile": "templates/NII-Report-Sample.xlsx",
+  
+      "replicationConfig": {
+        "source": "DATABASE",
+        "dbQueryKey": "FETCH_REPLICATION_FACTOR",
+        "fallbackCount": 1
+      },
+  
+      "placeholderDataSource": {
+        "dbQueryKey": "FETCH_PLACEHOLDER_VALUES_BY_SHEET",
+        "resultMapKeyColumn": "placeholder_key",
+        "resultMapValueColumn": "placeholder_value"
+      },
+  
+      "sheets": [
+  
+        {
+          "sheetName": "Q vs A_Citigroup",
+          "outputSheetName": "Q vs A_Citigroup",
+          "sheetOrder": 1,
+          "sheetType": "STATIC",
+          "visible": true,
+          "tabColor": "4472C4",
+  
+          "replicationConfig": {
+            "source": "STATIC",
+            "dbQueryKey": null,
+            "fallbackCount": 1
+          },
+  
+          "placeholderDataSource": {
+            "dbQueryKey": "FETCH_PLACEHOLDER_VALUES_BY_SHEET",
+            "reportName": "NII_PROJECTIONS",
+            "sheetName": "Q vs A_Citigroup",
+            "resultMapKeyColumn": "placeholder_key",
+            "resultMapValueColumn": "placeholder_value",
+            "scenarioScope": { "type": "NONE", "scenarioIndexes": [] },
+            "requiredPlaceholderKeys": ["{{currentcycle}}"]
+          },
+  
+          "freezePane": { "colSplit": 2, "rowSplit": 4 },
+          "headerRows": { "count": 4, "rowIndexes": [0,1,2,3] },
+  
+          "columnCopyConfig": {
+            "enabled": false,
+            "sourceStartColumnIndex": null,
+            "sourceEndColumnIndex": null,
+            "copyStartsAfterColumnIndex": null,
+            "addSeparatorBetweenBlocks": false,
+            "separatorColumnWidth": null,
+            "mergedRegionReplication": false,
+            "styleReplication": false,
+            "columnWidthReplication": false
+          },
+  
+          "placeholders": [
+            {
+              "placeholderKey": "{{currentcycle}}",
+              "description": "Current cycle label - appears in BHC BASE and BHC STRESS headers",
+              "targetRowIndex": 2,
+              "targetColumnIndex": 3,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "GLOBAL_STATIC",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            },
+            {
+              "placeholderKey": "{{currentcycle}}",
+              "description": "Current cycle label - BHC STRESS header position",
+              "targetRowIndex": 2,
+              "targetColumnIndex": 14,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "GLOBAL_STATIC",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            }
+          ],
+  
+          "columnWidthOverrides": [
+            { "columnIndex": 0, "width": 3000 },
+            { "columnIndex": 1, "width": 8000 },
+            { "columnIndex": 2, "width": 4000 }
+          ],
+          "rowHeightOverrides": [
+            { "rowIndex": 0, "heightInPoints": 25 },
+            { "rowIndex": 2, "heightInPoints": 20 }
+          ],
+          "staticColumns": [
+            { "columnIndex": 0, "headerLabel": "LineID",         "dataType": "STRING", "locked": true },
+            { "columnIndex": 1, "headerLabel": "Form Line Name", "dataType": "STRING", "locked": true },
+            { "columnIndex": 2, "headerLabel": "14Q -4Q 11",     "dataType": "STRING", "locked": true }
+          ],
+          "dataConfig": { "enabled": false, "dataSource": "NONE", "dataStartRowIndex": 4 }
+        },
+  
+        {
+          "sheetName": "Across Cycles_Citigroup",
+          "outputSheetName": "Across Cycles_Citigroup",
+          "sheetOrder": 2,
+          "sheetType": "DYNAMIC_COLUMN",
+          "visible": true,
+          "tabColor": "ED7D31",
+  
+          "replicationConfig": {
+            "source": "DATABASE",
+            "dbQueryKey": "FETCH_REPLICATION_FACTOR",
+            "fallbackCount": 1
+          },
+  
+          "placeholderDataSource": {
+            "dbQueryKey": "FETCH_PLACEHOLDER_VALUES_BY_SHEET",
+            "reportName": "NII_PROJECTIONS",
+            "sheetName": "Across Cycles_Citigroup",
+            "resultMapKeyColumn": "placeholder_key",
+            "resultMapValueColumn": "placeholder_value",
+            "scenarioScope": { "type": "DYNAMIC", "scenarioIndexes": [] },
+            "requiredPlaceholderKeys": [
+              "{{currentcycle}}",
+              "{{priorcycle}}",
+              "{{currentcycle vs priorcycle}}"
+            ]
+          },
+  
+          "freezePane": { "colSplit": 2, "rowSplit": 5 },
+          "headerRows": { "count": 5, "rowIndexes": [0,1,2,3,4] },
+  
+          "columnCopyConfig": {
+            "enabled": true,
+            "sourceStartColumnIndex": 3,
+            "sourceEndColumnIndex": 24,
+            "copyStartsAfterColumnIndex": 24,
+            "addSeparatorBetweenBlocks": true,
+            "separatorColumnWidth": 512,
+            "mergedRegionReplication": true,
+            "styleReplication": true,
+            "columnWidthReplication": true
+          },
+  
+          "placeholders": [
+            {
+              "placeholderKey": "{{scenarioname}}",
+              "description": "Scenario name - different per copied block",
+              "targetRowIndex": 2,
+              "targetColumnIndex": 3,
+              "intraBlockColumnOffset": 0,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "PER_SCENARIO",
+              "applyPerScenarioBlock": true,
+              "scenarioKeyPrefix": "SCENARIO_NAME_",
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 11,
+                "fontColor": "FFFFFF", "backgroundColor": "1F4E79"
+              }
+            },
+            {
+              "placeholderKey": "{{currentcycle}}",
+              "description": "Current cycle group label - same in every block",
+              "targetRowIndex": 3,
+              "targetColumnIndex": 3,
+              "intraBlockColumnOffset": 0,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "GLOBAL_STATIC",
+              "applyPerScenarioBlock": true,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "2E75B6"
+              }
+            },
+            {
+              "placeholderKey": "{{priorcycle}}",
+              "description": "Prior cycle group label - same in every block",
+              "targetRowIndex": 3,
+              "targetColumnIndex": 13,
+              "intraBlockColumnOffset": 10,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "GLOBAL_STATIC",
+              "applyPerScenarioBlock": true,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "2E75B6"
+              }
+            },
+            {
+              "placeholderKey": "{{currentcycle vs priorcycle}}",
+              "description": "Variance label - derived from current and prior cycle",
+              "targetRowIndex": 4,
+              "targetColumnIndex": 23,
+              "intraBlockColumnOffset": 20,
+              "isReplace": true,
+              "valueSource": "DERIVED",
+              "valueScope": "DERIVED",
+              "applyPerScenarioBlock": true,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": {
+                "expression": "{{currentcycle}} vs {{priorcycle}}",
+                "dependsOn": ["{{currentcycle}}", "{{priorcycle}}"]
+              },
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            },
+            {
+              "placeholderKey": "{{currentcycle vs priorcycle}} %",
+              "description": "Variance percentage label - derived",
+              "targetRowIndex": 4,
+              "targetColumnIndex": 24,
+              "intraBlockColumnOffset": 21,
+              "isReplace": true,
+              "valueSource": "DERIVED",
+              "valueScope": "DERIVED",
+              "applyPerScenarioBlock": true,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": {
+                "expression": "{{currentcycle}} vs {{priorcycle}} %",
+                "dependsOn": ["{{currentcycle}}", "{{priorcycle}}"]
+              },
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            }
+          ],
+  
+          "columnWidthOverrides": [
+            { "columnIndex": 0, "width": 3000 },
+            { "columnIndex": 1, "width": 8000 },
+            { "columnIndex": 2, "width": 512  }
+          ],
+          "rowHeightOverrides": [
+            { "rowIndex": 0, "heightInPoints": 25 },
+            { "rowIndex": 2, "heightInPoints": 20 },
+            { "rowIndex": 3, "heightInPoints": 20 },
+            { "rowIndex": 4, "heightInPoints": 20 }
+          ],
+          "staticColumns": [
+            { "columnIndex": 0, "headerLabel": "LineID",       "dataType": "STRING", "locked": true },
+            { "columnIndex": 1, "headerLabel": "FormLineName", "dataType": "STRING", "locked": true },
+            { "columnIndex": 2, "headerLabel": "",             "dataType": "BLANK",  "locked": true }
+          ],
+          "dataConfig": { "enabled": false, "dataSource": "NONE", "dataStartRowIndex": 5 }
+        },
+  
+        {
+          "sheetName": "Across Scenario_Citigroup",
+          "outputSheetName": "Across Scenario_Citigroup",
+          "sheetOrder": 3,
+          "sheetType": "DYNAMIC_COLUMN",
+          "visible": true,
+          "tabColor": "70AD47",
+  
+          "replicationConfig": {
+            "source": "STATIC",
+            "dbQueryKey": null,
+            "fallbackCount": 2
+          },
+  
+          "placeholderDataSource": {
+            "dbQueryKey": "FETCH_PLACEHOLDER_VALUES_BY_SHEET",
+            "reportName": "NII_PROJECTIONS",
+            "sheetName": "Across Scenario_Citigroup",
+            "resultMapKeyColumn": "placeholder_key",
+            "resultMapValueColumn": "placeholder_value",
+            "scenarioScope": {
+              "type": "SPECIFIC",
+              "scenarioIndexes": [1, 2]
+            },
+            "requiredPlaceholderKeys": [
+              "{{currentcycle}}",
+              "{{scenarioname1}} vs {{scenarioname2}}"
+            ]
+          },
+  
+          "freezePane": { "colSplit": 2, "rowSplit": 3 },
+          "headerRows": { "count": 3, "rowIndexes": [0,1,2] },
+  
+          "columnCopyConfig": {
+            "enabled": false,
+            "sourceStartColumnIndex": null,
+            "sourceEndColumnIndex": null,
+            "copyStartsAfterColumnIndex": null,
+            "addSeparatorBetweenBlocks": false,
+            "separatorColumnWidth": null,
+            "mergedRegionReplication": false,
+            "styleReplication": false,
+            "columnWidthReplication": false
+          },
+  
+          "placeholders": [
+            {
+              "placeholderKey": "{{scenarioname}}",
+              "description": "First scenario name - fixed position col 3",
+              "targetRowIndex": 1,
+              "targetColumnIndex": 3,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "PER_SCENARIO",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": "SCENARIO_NAME_",
+              "scenarioIndexOverride": 1,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 11,
+                "fontColor": "FFFFFF", "backgroundColor": "1F4E79"
+              }
+            },
+            {
+              "placeholderKey": "{{scenarioname2}}",
+              "description": "Second scenario name - fixed position col 14",
+              "targetRowIndex": 1,
+              "targetColumnIndex": 14,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "PER_SCENARIO",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": "SCENARIO_NAME_",
+              "scenarioIndexOverride": 2,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 11,
+                "fontColor": "FFFFFF", "backgroundColor": "1F4E79"
+              }
+            },
+            {
+              "placeholderKey": "{{currentcycle}}",
+              "description": "Current cycle total col - appears twice at col 12 and col 25",
+              "targetRowIndex": 2,
+              "targetColumnIndex": 12,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "GLOBAL_STATIC",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            },
+            {
+              "placeholderKey": "{{currentcycle}}_2",
+              "description": "Current cycle total col second instance at col 25",
+              "targetRowIndex": 2,
+              "targetColumnIndex": 25,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "GLOBAL_STATIC",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            },
+            {
+              "placeholderKey": "{{scenarioname1}} vs {{scenarioname2}}",
+              "description": "Variance label - derived from two scenario names",
+              "targetRowIndex": 2,
+              "targetColumnIndex": 26,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DERIVED",
+              "valueScope": "DERIVED",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": {
+                "expression": "{{SCENARIO_NAME_1}} vs {{SCENARIO_NAME_2}}",
+                "dependsOn": ["{{SCENARIO_NAME_1}}", "{{SCENARIO_NAME_2}}"]
+              },
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            },
+            {
+              "placeholderKey": "{{scenarioname1}} vs {{scenarioname2}} %",
+              "description": "Variance percentage label - derived",
+              "targetRowIndex": 2,
+              "targetColumnIndex": 27,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DERIVED",
+              "valueScope": "DERIVED",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": {
+                "expression": "{{SCENARIO_NAME_1}} vs {{SCENARIO_NAME_2}} %",
+                "dependsOn": ["{{SCENARIO_NAME_1}}", "{{SCENARIO_NAME_2}}"]
+              },
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            }
+          ],
+  
+          "columnWidthOverrides": [
+            { "columnIndex": 0, "width": 3000 },
+            { "columnIndex": 1, "width": 8000 },
+            { "columnIndex": 2, "width": 512  }
+          ],
+          "rowHeightOverrides": [
+            { "rowIndex": 0, "heightInPoints": 25 },
+            { "rowIndex": 1, "heightInPoints": 20 },
+            { "rowIndex": 2, "heightInPoints": 20 }
+          ],
+          "staticColumns": [
+            { "columnIndex": 0, "headerLabel": "LineID",         "dataType": "STRING", "locked": true },
+            { "columnIndex": 1, "headerLabel": "Form Line Name", "dataType": "STRING", "locked": true },
+            { "columnIndex": 2, "headerLabel": "",               "dataType": "BLANK",  "locked": true }
+          ],
+          "dataConfig": { "enabled": false, "dataSource": "NONE", "dataStartRowIndex": 3 }
+        },
+  
+        {
+          "sheetName": "Q vs A_CBNA",
+          "outputSheetName": "Q vs A_CBNA",
+          "sheetOrder": 4,
+          "sheetType": "STATIC",
+          "visible": true,
+          "tabColor": "4472C4",
+  
+          "replicationConfig": {
+            "source": "STATIC",
+            "dbQueryKey": null,
+            "fallbackCount": 1
+          },
+  
+          "placeholderDataSource": {
+            "dbQueryKey": "FETCH_PLACEHOLDER_VALUES_BY_SHEET",
+            "reportName": "NII_PROJECTIONS",
+            "sheetName": "Q vs A_CBNA",
+            "resultMapKeyColumn": "placeholder_key",
+            "resultMapValueColumn": "placeholder_value",
+            "scenarioScope": { "type": "NONE", "scenarioIndexes": [] },
+            "requiredPlaceholderKeys": ["{{currentcycle}}"]
+          },
+  
+          "freezePane": { "colSplit": 2, "rowSplit": 4 },
+          "headerRows": { "count": 4, "rowIndexes": [0,1,2,3] },
+  
+          "columnCopyConfig": {
+            "enabled": false,
+            "sourceStartColumnIndex": null,
+            "sourceEndColumnIndex": null,
+            "copyStartsAfterColumnIndex": null,
+            "addSeparatorBetweenBlocks": false,
+            "separatorColumnWidth": null,
+            "mergedRegionReplication": false,
+            "styleReplication": false,
+            "columnWidthReplication": false
+          },
+  
+          "placeholders": [
+            {
+              "placeholderKey": "{{currentcycle}}",
+              "description": "Current cycle - BHC BASE position",
+              "targetRowIndex": 2,
+              "targetColumnIndex": 3,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "GLOBAL_STATIC",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            },
+            {
+              "placeholderKey": "{{currentcycle}}",
+              "description": "Current cycle - BHC STRESS position",
+              "targetRowIndex": 2,
+              "targetColumnIndex": 14,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "GLOBAL_STATIC",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            }
+          ],
+  
+          "columnWidthOverrides": [
+            { "columnIndex": 0, "width": 3000 },
+            { "columnIndex": 1, "width": 8000 },
+            { "columnIndex": 2, "width": 4000 }
+          ],
+          "rowHeightOverrides": [
+            { "rowIndex": 0, "heightInPoints": 25 },
+            { "rowIndex": 2, "heightInPoints": 20 }
+          ],
+          "staticColumns": [
+            { "columnIndex": 0, "headerLabel": "LineID",         "dataType": "STRING", "locked": true },
+            { "columnIndex": 1, "headerLabel": "Form Line Name", "dataType": "STRING", "locked": true },
+            { "columnIndex": 2, "headerLabel": "14Q -4Q 11",     "dataType": "STRING", "locked": true }
+          ],
+          "dataConfig": { "enabled": false, "dataSource": "NONE", "dataStartRowIndex": 4 }
+        },
+  
+        {
+          "sheetName": "Across Cycles_CBNA",
+          "outputSheetName": "Across Cycles_CBNA",
+          "sheetOrder": 5,
+          "sheetType": "DYNAMIC_COLUMN",
+          "visible": true,
+          "tabColor": "ED7D31",
+  
+          "replicationConfig": {
+            "source": "DATABASE",
+            "dbQueryKey": "FETCH_REPLICATION_FACTOR",
+            "fallbackCount": 1
+          },
+  
+          "placeholderDataSource": {
+            "dbQueryKey": "FETCH_PLACEHOLDER_VALUES_BY_SHEET",
+            "reportName": "NII_PROJECTIONS",
+            "sheetName": "Across Cycles_CBNA",
+            "resultMapKeyColumn": "placeholder_key",
+            "resultMapValueColumn": "placeholder_value",
+            "scenarioScope": { "type": "DYNAMIC", "scenarioIndexes": [] },
+            "requiredPlaceholderKeys": [
+              "{{currentcycle}}",
+              "{{priorcycle}}",
+              "{{currentcycle vs priorcycle}}"
+            ]
+          },
+  
+          "freezePane": { "colSplit": 2, "rowSplit": 5 },
+          "headerRows": { "count": 5, "rowIndexes": [0,1,2,3,4] },
+  
+          "columnCopyConfig": {
+            "enabled": true,
+            "sourceStartColumnIndex": 3,
+            "sourceEndColumnIndex": 24,
+            "copyStartsAfterColumnIndex": 24,
+            "addSeparatorBetweenBlocks": true,
+            "separatorColumnWidth": 512,
+            "mergedRegionReplication": true,
+            "styleReplication": true,
+            "columnWidthReplication": true
+          },
+  
+          "placeholders": [
+            {
+              "placeholderKey": "{{scenarioname}}",
+              "description": "Scenario name per block",
+              "targetRowIndex": 2,
+              "targetColumnIndex": 3,
+              "intraBlockColumnOffset": 0,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "PER_SCENARIO",
+              "applyPerScenarioBlock": true,
+              "scenarioKeyPrefix": "SCENARIO_NAME_",
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 11,
+                "fontColor": "FFFFFF", "backgroundColor": "1F4E79"
+              }
+            },
+            {
+              "placeholderKey": "{{currentcycle}}",
+              "description": "Current cycle label - same in every block",
+              "targetRowIndex": 3,
+              "targetColumnIndex": 3,
+              "intraBlockColumnOffset": 0,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "GLOBAL_STATIC",
+              "applyPerScenarioBlock": true,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "2E75B6"
+              }
+            },
+            {
+              "placeholderKey": "{{priorcycle}}",
+              "description": "Prior cycle label - same in every block",
+              "targetRowIndex": 3,
+              "targetColumnIndex": 13,
+              "intraBlockColumnOffset": 10,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "GLOBAL_STATIC",
+              "applyPerScenarioBlock": true,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "2E75B6"
+              }
+            },
+            {
+              "placeholderKey": "{{currentcycle vs priorcycle}}",
+              "description": "Variance label - derived",
+              "targetRowIndex": 4,
+              "targetColumnIndex": 23,
+              "intraBlockColumnOffset": 20,
+              "isReplace": true,
+              "valueSource": "DERIVED",
+              "valueScope": "DERIVED",
+              "applyPerScenarioBlock": true,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": {
+                "expression": "{{currentcycle}} vs {{priorcycle}}",
+                "dependsOn": ["{{currentcycle}}", "{{priorcycle}}"]
+              },
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            },
+            {
+              "placeholderKey": "{{currentcycle vs priorcycle}} %",
+              "description": "Variance percentage label - derived",
+              "targetRowIndex": 4,
+              "targetColumnIndex": 24,
+              "intraBlockColumnOffset": 21,
+              "isReplace": true,
+              "valueSource": "DERIVED",
+              "valueScope": "DERIVED",
+              "applyPerScenarioBlock": true,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": {
+                "expression": "{{currentcycle}} vs {{priorcycle}} %",
+                "dependsOn": ["{{currentcycle}}", "{{priorcycle}}"]
+              },
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            }
+          ],
+  
+          "columnWidthOverrides": [
+            { "columnIndex": 0, "width": 3000 },
+            { "columnIndex": 1, "width": 8000 },
+            { "columnIndex": 2, "width": 512  }
+          ],
+          "rowHeightOverrides": [
+            { "rowIndex": 0, "heightInPoints": 25 },
+            { "rowIndex": 2, "heightInPoints": 20 },
+            { "rowIndex": 3, "heightInPoints": 20 },
+            { "rowIndex": 4, "heightInPoints": 20 }
+          ],
+          "staticColumns": [
+            { "columnIndex": 0, "headerLabel": "LineID",       "dataType": "STRING", "locked": true },
+            { "columnIndex": 1, "headerLabel": "FormLineName", "dataType": "STRING", "locked": true },
+            { "columnIndex": 2, "headerLabel": "",             "dataType": "BLANK",  "locked": true }
+          ],
+          "dataConfig": { "enabled": false, "dataSource": "NONE", "dataStartRowIndex": 5 }
+        },
+  
+        {
+          "sheetName": "Across Scenario_CBNA",
+          "outputSheetName": "Across Scenario_CBNA",
+          "sheetOrder": 6,
+          "sheetType": "DYNAMIC_COLUMN",
+          "visible": true,
+          "tabColor": "70AD47",
+  
+          "replicationConfig": {
+            "source": "STATIC",
+            "dbQueryKey": null,
+            "fallbackCount": 2
+          },
+  
+          "placeholderDataSource": {
+            "dbQueryKey": "FETCH_PLACEHOLDER_VALUES_BY_SHEET",
+            "reportName": "NII_PROJECTIONS",
+            "sheetName": "Across Scenario_CBNA",
+            "resultMapKeyColumn": "placeholder_key",
+            "resultMapValueColumn": "placeholder_value",
+            "scenarioScope": {
+              "type": "SPECIFIC",
+              "scenarioIndexes": [1, 2]
+            },
+            "requiredPlaceholderKeys": [
+              "{{currentcycle}}",
+              "{{scenarioname1}} vs {{scenarioname2}}"
+            ]
+          },
+  
+          "freezePane": { "colSplit": 2, "rowSplit": 3 },
+          "headerRows": { "count": 3, "rowIndexes": [0,1,2] },
+  
+          "columnCopyConfig": {
+            "enabled": false,
+            "sourceStartColumnIndex": null,
+            "sourceEndColumnIndex": null,
+            "copyStartsAfterColumnIndex": null,
+            "addSeparatorBetweenBlocks": false,
+            "separatorColumnWidth": null,
+            "mergedRegionReplication": false,
+            "styleReplication": false,
+            "columnWidthReplication": false
+          },
+  
+          "placeholders": [
+            {
+              "placeholderKey": "{{scenarioname}}",
+              "description": "First scenario name",
+              "targetRowIndex": 1,
+              "targetColumnIndex": 3,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "PER_SCENARIO",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": "SCENARIO_NAME_",
+              "scenarioIndexOverride": 1,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 11,
+                "fontColor": "FFFFFF", "backgroundColor": "1F4E79"
+              }
+            },
+            {
+              "placeholderKey": "{{scenarioname2}}",
+              "description": "Second scenario name",
+              "targetRowIndex": 1,
+              "targetColumnIndex": 14,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "PER_SCENARIO",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": "SCENARIO_NAME_",
+              "scenarioIndexOverride": 2,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 11,
+                "fontColor": "FFFFFF", "backgroundColor": "1F4E79"
+              }
+            },
+            {
+              "placeholderKey": "{{currentcycle}}",
+              "description": "Current cycle col 12",
+              "targetRowIndex": 2,
+              "targetColumnIndex": 12,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "GLOBAL_STATIC",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            },
+            {
+              "placeholderKey": "{{currentcycle}}_2",
+              "description": "Current cycle col 25",
+              "targetRowIndex": 2,
+              "targetColumnIndex": 25,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DB_MAP",
+              "valueScope": "GLOBAL_STATIC",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": null,
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            },
+            {
+              "placeholderKey": "{{scenarioname1}} vs {{scenarioname2}}",
+              "description": "Variance label - derived",
+              "targetRowIndex": 2,
+              "targetColumnIndex": 26,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DERIVED",
+              "valueScope": "DERIVED",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": {
+                "expression": "{{SCENARIO_NAME_1}} vs {{SCENARIO_NAME_2}}",
+                "dependsOn": ["{{SCENARIO_NAME_1}}", "{{SCENARIO_NAME_2}}"]
+              },
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            },
+            {
+              "placeholderKey": "{{scenarioname1}} vs {{scenarioname2}} %",
+              "description": "Variance percentage label - derived",
+              "targetRowIndex": 2,
+              "targetColumnIndex": 27,
+              "intraBlockColumnOffset": null,
+              "isReplace": true,
+              "valueSource": "DERIVED",
+              "valueScope": "DERIVED",
+              "applyPerScenarioBlock": false,
+              "scenarioKeyPrefix": null,
+              "dateFormat": null,
+              "derivedValueConfig": {
+                "expression": "{{SCENARIO_NAME_1}} vs {{SCENARIO_NAME_2}} %",
+                "dependsOn": ["{{SCENARIO_NAME_1}}", "{{SCENARIO_NAME_2}}"]
+              },
+              "styleOverride": {
+                "bold": true, "fontSize": 10,
+                "fontColor": "FFFFFF", "backgroundColor": "4472C4"
+              }
+            }
+          ],
+  
+          "columnWidthOverrides": [
+            { "columnIndex": 0, "width": 3000 },
+            { "columnIndex": 1, "width": 8000 },
+            { "columnIndex": 2, "width": 512  }
+          ],
+          "rowHeightOverrides": [
+            { "rowIndex": 0, "heightInPoints": 25 },
+            { "rowIndex": 1, "heightInPoints": 20 },
+            { "rowIndex": 2, "heightInPoints": 20 }
+          ],
+          "staticColumns": [
+            { "columnIndex": 0, "headerLabel": "LineID",         "dataType": "STRING", "locked": true },
+            { "columnIndex": 1, "headerLabel": "Form Line Name", "dataType": "STRING", "locked": true },
+            { "columnIndex": 2, "headerLabel": "",               "dataType": "BLANK",  "locked": true }
+          ],
+          "dataConfig": { "enabled": false, "dataSource": "NONE", "dataStartRowIndex": 3 }
+        }
+  
+      ]
+    }
+  }
