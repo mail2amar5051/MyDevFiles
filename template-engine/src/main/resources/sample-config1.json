@@ -1,0 +1,37 @@
+{
+  "templateId": 101,
+  "templateName": "Final Template",
+  "queries": {
+    "scenarios": {
+      "queryKey": "GET_SCENARIOS",
+      "returns": "LIST",
+      "description": "Each item becomes one clone of the column block"
+    },
+    "placeholders": {
+      "queryKey": "GET_PLACEHOLDERS",
+      "returns": "MAP",
+      "description": "Common placeholders applied across all clones"
+    }
+  },
+  "sheets": [
+    {
+      "sourceSheetName": "Across Cycles_Citigroup",
+      "outputSheetName": "Across Cycles_CG",
+      "staticColumns": ["A", "B"],
+      "cloneBlock": {
+        "isCloneRequired": true,
+        "columns": "C:Y",
+        "repeatForEach": "scenarios",
+        "scenarioNamePlaceholder": "{{scenarioname}}",
+        "scenarioNameField": "scenarioName"
+      },
+      "commonPlaceholders": "placeholders",
+      "preserve": [
+        "mergedRegions",
+        "formulas",
+        "styles",
+        "columnWidths"
+      ]
+    }
+  ]
+}
