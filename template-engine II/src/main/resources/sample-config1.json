@@ -1,0 +1,151 @@
+{
+  "templateId": 101,
+  "templateName": "Final Template",
+  "queries": {
+    "scenarios": {
+      "queryKey": "GET_SCENARIOS",
+      "returns": "LIST",
+      "description": "Each item becomes one clone of the column block"
+    },
+    "placeholders": {
+      "queryKey": "GET_PLACEHOLDERS",
+      "returns": "MAP",
+      "description": "Common placeholders applied across all clones"
+    }
+  },
+  "sheets": [
+    {
+      "sourceSheetName": "Across Cycles_Citigroup",
+      "outputSheetName": "Across Cycles_CG",
+      "staticColumns": {
+        "columns": ["A", "B"],
+        "dataSourceKey": "GET_LINE_ITEMS",
+        "startRow": 6,
+        "mappings": [
+          { "column": "A", "dbColumn": "line_id" },
+          { "column": "B", "dbColumn": "form_line_name" }
+        ]
+      },
+      "cloneBlock": {
+        "isCloneRequired": true,
+        "columns": "C:Y",
+        "repeatForEach": "scenarios",
+        "scenarioNamePlaceholder": "{{scenarioname}}",
+        "scenarioNameField": "scenarioName"
+      },
+      "commonPlaceholders": "placeholders",
+      "preserve": [
+        "mergedRegions",
+        "formulas",
+        "styles",
+        "columnWidths"
+      ],
+      "dataRows": {
+        "startRow": 6,
+        "dataSourceKey": "GET_SCENARIO_DATA",
+        "rowKey": "line_id",
+        "scenarioKey": "scenario_name",
+        "blockMappings": [
+          {
+            "offset": 0,
+            "dbColumn": "curr_pq1"
+          },
+          {
+            "offset": 1,
+            "dbColumn": "curr_pq2"
+          },
+          {
+            "offset": 2,
+            "dbColumn": "curr_pq3"
+          },
+          {
+            "offset": 3,
+            "dbColumn": "curr_pq4"
+          },
+          {
+            "offset": 4,
+            "dbColumn": "curr_pq5"
+          },
+          {
+            "offset": 5,
+            "dbColumn": "curr_pq6"
+          },
+          {
+            "offset": 6,
+            "dbColumn": "curr_pq7"
+          },
+          {
+            "offset": 7,
+            "dbColumn": "curr_pq8"
+          },
+          {
+            "offset": 8,
+            "dbColumn": "curr_pq9"
+          },
+          {
+            "offset": 10,
+            "dbColumn": "prior_pq1"
+          },
+          {
+            "offset": 11,
+            "dbColumn": "prior_pq2"
+          },
+          {
+            "offset": 12,
+            "dbColumn": "prior_pq3"
+          },
+          {
+            "offset": 13,
+            "dbColumn": "prior_pq4"
+          },
+          {
+            "offset": 14,
+            "dbColumn": "prior_pq5"
+          },
+          {
+            "offset": 15,
+            "dbColumn": "prior_pq6"
+          },
+          {
+            "offset": 16,
+            "dbColumn": "prior_pq7"
+          },
+          {
+            "offset": 17,
+            "dbColumn": "prior_pq8"
+          },
+          {
+            "offset": 18,
+            "dbColumn": "prior_pq9"
+          }
+        ],
+        "formulaColumns": [
+          {
+            "offset": 9,
+            "description": "currentcycle total",
+            "formula": "SUM({block+0}{row}:{block+8}{row})",
+            "source": "TEMPLATE_OR_JSON"
+          },
+          {
+            "offset": 19,
+            "description": "priorcycle total",
+            "formula": "SUM({block+10}{row}:{block+18}{row})",
+            "source": "TEMPLATE_OR_JSON"
+          },
+          {
+            "offset": 20,
+            "description": "currentcycle vs priorcycle",
+            "formula": "{block+9}{row}-{block+19}{row}",
+            "source": "TEMPLATE_OR_JSON"
+          },
+          {
+            "offset": 21,
+            "description": "currentcycle vs priorcycle %",
+            "formula": "IF({block+19}{row}=0,0,({block+9}{row}-{block+19}{row})/{block+19}{row})",
+            "source": "TEMPLATE_OR_JSON"
+          }
+        ]
+      }
+    }
+  ]
+}
