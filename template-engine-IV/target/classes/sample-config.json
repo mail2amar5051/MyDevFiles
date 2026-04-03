@@ -1,0 +1,51 @@
+{
+  "templateId": 101,
+  "templateName": "Final Template",
+  "queries": {
+    "scenarios": {
+      "queryKey": "GET_SCENARIOS",
+      "returns": "LIST",
+      "description": "Each item becomes one clone of the column block"
+    },
+    "placeholders": {
+      "queryKey": "GET_PLACEHOLDERS",
+      "returns": "MAP",
+      "description": "Common placeholders applied across all clones"
+    }
+  },
+  "sheets": [
+    {
+      "sourceSheetName": "Q vs A_Citigroup",
+      "outputSheetName": "Q vs A_CG",
+      "sheetOrder": 1,
+      "staticColumns": ["A", "B"],
+      "commonPlaceholders": "placeholders",
+      "preserve": [
+        "mergedRegions",
+        "formulas",
+        "styles",
+        "columnWidths"
+      ]
+    },
+    {
+      "sourceSheetName": "Across Cycles_Citigroup",
+      "outputSheetName": "Across Cycles_CG",
+      "sheetOrder": 2,
+      "staticColumns": ["A", "B"],
+      "cloneBlock": {
+        "isCloneRequired": true,
+        "columns": "C:Y",
+        "repeatForEach": "scenarios",
+        "scenarioNamePlaceholder": "{{scenarioname}}",
+        "scenarioNameField": "scenarioName"
+      },
+      "commonPlaceholders": "placeholders",
+      "preserve": [
+        "mergedRegions",
+        "formulas",
+        "styles",
+        "columnWidths"
+      ]
+    }
+  ]
+}

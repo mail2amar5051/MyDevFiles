@@ -1,0 +1,165 @@
+{
+  "templateId": 101,
+  "reportId": 5001,
+
+  "queries": {
+    "scenarios": {
+      "queryKey": "GET_SCENARIOS",
+      "returns": "LIST"
+    },
+    "placeholders": {
+      "queryKey": "GET_PLACEHOLDERS",
+      "returns": "MAP"
+    }
+  },
+
+  "sheets": [
+    {
+      "sourceSheetName": "Across Cycles_Citigroup",
+      "outputSheetName": "Across_cycle_scenarios",
+
+      "staticColumns": {
+        "columns": ["A", "B"],
+        "dataSourceKey": "GET_LINE_ITEMS",
+        "startRow": 6,
+        "mappings": [
+          { "column": "A", "dbColumn": "line_id" },
+          { "column": "B", "dbColumn": "form_line_name" }
+        ]
+      },
+
+      "cloneBlock": {
+        "columns": "C:Y",
+        "repeatForEach": "scenarios",
+        "scenarioNamePlaceholder": "{{scenarioname}}",
+        "scenarioNameField": "scenarioName"
+      },
+
+      "dataRows": {
+        "headerRow": 5,
+        "startRow": 6,
+        "dataSourceKey": "GET_SCENARIO_DATA",
+        "rowKey": "line_id",
+        "scenarioKey": "scenario_name",
+
+        "blockMappings": [
+          { "offset": 1,  "dbColumn": "curr_pq1" },
+          { "offset": 2,  "dbColumn": "curr_pq2" },
+          { "offset": 3,  "dbColumn": "curr_pq3" },
+          { "offset": 4,  "dbColumn": "curr_pq4" },
+          { "offset": 5,  "dbColumn": "curr_pq5" },
+          { "offset": 6,  "dbColumn": "curr_pq6" },
+          { "offset": 7,  "dbColumn": "curr_pq7" },
+          { "offset": 8,  "dbColumn": "curr_pq8" },
+          { "offset": 9,  "dbColumn": "curr_pq9" },
+          { "offset": 11, "dbColumn": "prior_pq1" },
+          { "offset": 12, "dbColumn": "prior_pq2" },
+          { "offset": 13, "dbColumn": "prior_pq3" },
+          { "offset": 14, "dbColumn": "prior_pq4" },
+          { "offset": 15, "dbColumn": "prior_pq5" },
+          { "offset": 16, "dbColumn": "prior_pq6" },
+          { "offset": 17, "dbColumn": "prior_pq7" },
+          { "offset": 18, "dbColumn": "prior_pq8" },
+          { "offset": 19, "dbColumn": "prior_pq9" }
+        ]
+      },
+
+      "conditionalStyles": [
+        {
+          "offsets": [21, 22],
+          "description": "Red fill + black font for negative comparison values",
+          "condition": "LESS_THAN",
+          "value": 0,
+          "style": {
+            "fillColor": "FF0000",
+            "fontColor": "000000"
+          }
+        }
+      ],
+      "conditionalStyles": [
+        {
+          "priority": 1,
+          "offsets": [21, 22],
+          "description": "Red fill for negative comparison values",
+          "condition": "LESS_THAN",
+          "value": 0,
+          "style": { "fillColor": "FF0000", "fontColor": "000000" }
+        }
+      ],
+
+      "commonPlaceholders": "placeholders",
+
+      "preserve": [
+        "mergedRegions",
+        "formulas",
+        "styles",
+        "columnWidths"
+      ]
+    },
+    {
+      "sourceSheetName": "Q vs A_Citigroup",
+      "outputSheetName": "Q vs A_Citigroup",
+
+      "staticColumns": {
+        "columns": ["A", "B", "C"],
+        "dataSourceKey": "GET_QVA_LINE_ITEMS",
+        "startRow": 5,
+        "mappings": [
+          { "column": "A", "dbColumn": "line_id" },
+          { "column": "B", "dbColumn": "form_line_name" },
+          { "column": "C", "dbColumn": "baseline_14q" }
+        ]
+      },
+
+      "directMappings": {
+        "headerRow": 4,
+        "startRow": 5,
+        "dataSourceKey": "GET_QVA_DATA",
+        "rowKey": "line_id",
+        "columns": [
+          { "column": "E",  "dbColumn": "base_pq1" },
+          { "column": "F",  "dbColumn": "base_pq2" },
+          { "column": "G",  "dbColumn": "base_pq3" },
+          { "column": "H",  "dbColumn": "base_pq4" },
+          { "column": "I",  "dbColumn": "base_pq5" },
+          { "column": "J",  "dbColumn": "base_pq6" },
+          { "column": "K",  "dbColumn": "base_pq7" },
+          { "column": "L",  "dbColumn": "base_pq8" },
+          { "column": "M",  "dbColumn": "base_pq9" },
+          { "column": "O",  "dbColumn": "stress_pq1" },
+          { "column": "P",  "dbColumn": "stress_pq2" },
+          { "column": "Q",  "dbColumn": "stress_pq3" },
+          { "column": "R",  "dbColumn": "stress_pq4" },
+          { "column": "S",  "dbColumn": "stress_pq5" },
+          { "column": "T",  "dbColumn": "stress_pq6" },
+          { "column": "U",  "dbColumn": "stress_pq7" },
+          { "column": "V",  "dbColumn": "stress_pq8" },
+          { "column": "W",  "dbColumn": "stress_pq9" }
+        ]
+      },
+
+      "conditionalStyles": [
+        {
+          "priority": 1,
+          "offsets": [24, 25],
+          "description": "Red fill for negative Base PQ1 vs 14Q",
+          "condition": "LESS_THAN",
+          "value": 0,
+          "style": { "fillColor": "FF0000", "fontColor": "000000" }
+        },
+        {
+          "priority": 2,
+          "offsets": [27, 28],
+          "description": "Red fill for negative Stress PQ1 vs 14Q",
+          "condition": "LESS_THAN",
+          "value": 0,
+          "style": { "fillColor": "FF0000", "fontColor": "000000" }
+        }
+      ],
+
+      "commonPlaceholders": "placeholders",
+      "preserve": ["mergedRegions", "formulas", "styles", "columnWidths"]
+    }
+
+  ]
+}
