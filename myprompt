@@ -1,71 +1,58 @@
-Update the existing Calculation Center implementation in the application.
+Update the existing Calculation module to implement the requirements below.
 
-Refer to the existing Calculation module for its application shell,
-vertical calculation navigation, calculation identifiers, shared components,
-routing patterns, and services.
+Reuse the existing application shell, shared components, navigation,
+calculation identifiers, routing, services, backend integrations, and styling.
 
-This is an enhancement of the existing implementation, not a separate
-application or a replacement of the existing Calculation module.
+This is an enhancement of the existing implementation, not a redesign or
+a separate application.
 
-Implement all requirements below. In particular:
-1. Replace the horizontal calculation tabs with a vertical secondary menu.
-2. Move the calculation execution stages above Calculation Context.
-3. Correct inconsistent readiness, selection, and execution states.
-4. Provide clear readiness failures and live execution details.
+IMPORTANT:
+- Preserve the existing Calculation module’s visual appearance.
+- Initially show the calculation description and sector/scenario controls.
+- After Calculate is clicked, open the execution container ABOVE the
+  sector/scenario controls.
+- Allow navigation between calculations while execution continues.
+- Restore the last active run when users return to a calculation.
+- Allow completed execution panels to be closed.
+- Provide a clock icon for calculation history.
 
-Do not consider the implementation complete if the calculation menu remains
-horizontal or the execution stepper remains below Calculation Context.
+These requirements supersede earlier conflicting layout or styling instructions.
 
---------------------------------------------------
-1. REQUIRED PAGE STRUCTURE
---------------------------------------------------
+==================================================
+1. INSPECT AND REUSE THE EXISTING IMPLEMENTATION
+==================================================
 
-Use this desktop layout:
+Before implementing changes, inspect:
+- Existing Calculation navigation.
+- Calculation identifiers and routes.
+- Sector and scenario selection logic.
+- Readiness services.
+- Execution and status services.
+- Shared state management.
+- Existing container, title, menu, button, dropdown, and status styles.
+- Existing history or drawer components.
 
-Existing application header
-|
-| Primary application sidebar
-|   | Vertical calculation menu
-|   |   | Main calculation dashboard
+Reuse working components and integrations rather than duplicating them.
 
-Within the main dashboard, use this exact order:
+Preserve unrelated functionality.
 
-1. Breadcrumb
-2. Left-aligned calculation title and description
-3. Compact development-mode notice, only when applicable
-4. Calculation Stages card containing the horizontal execution stepper
-5. Calculation Context card containing sector, scenario, and readiness
-6. Readiness Issues panel, visible when readiness fails
-7. Live Stage Details panel
-8. Outputs and Execution History
+Do not invent backend endpoints, event schemas, or calculation identifiers.
+Clearly identify missing backend capabilities.
 
-Do not place the stage stepper inside a lower execution panel beneath
-Calculation Context.
+==================================================
+2. PRIMARY AND SECONDARY NAVIGATION
+==================================================
 
---------------------------------------------------
-2. PRIMARY APPLICATION NAVIGATION
---------------------------------------------------
+Use “Calculation” as the entry in the primary left application navigation.
 
-Preserve the existing primary application sidebar and its expand/collapse
-behavior.
+When selected:
+- Display a secondary vertical calculation menu immediately beside the
+  primary application sidebar.
+- Display the selected calculation dashboard to its right.
 
-Highlight “Calculation Center” when the user is within this module.
+Use existing calculation metadata.
 
-Do not remove or modify unrelated navigation items.
-
---------------------------------------------------
-3. VERTICAL CALCULATION MENU — REQUIRED
---------------------------------------------------
-
-When Calculation Center is selected, display a secondary vertical menu
-immediately to the right of the primary application sidebar.
-
-This must be a vertical list, not horizontal tabs.
-
-Menu heading:
-“Calculations”
-
-Display the available calculation types using existing metadata:
+Available calculation types include:
 - Net Income Tax
 - OCI Tax
 - ALLL / PULC
@@ -73,430 +60,659 @@ Display the available calculation types using existing metadata:
 - COC
 - Tax ETR
 
-Preserve existing backend identifiers and application labels.
+Preserve actual application labels, identifiers, and routes.
 
-Desktop behavior:
-- Keep this menu visible beside the calculation dashboard.
-- Use approximately 190–220px width.
-- Allow its contents to scroll if needed.
-- Do not overlay or obstruct the dashboard.
-- Remove the existing horizontal calculation tab row.
-- Do not display duplicate horizontal and vertical calculation menus.
+The secondary menu must be vertical.
+Do not replace it with horizontal tabs.
+Do not display duplicate horizontal and vertical calculation menus.
 
-Selection behavior:
-- Selecting an item loads its dashboard in the main content area.
-- Update the title, breadcrumb, description, and calculation-specific data.
-- Preserve the selected calculation when its route is refreshed.
-- Highlight the selected item using a light-blue background, blue border
-  or left accent, and blue text.
+Selecting a calculation:
+- Loads its dashboard.
+- Updates its title and description.
+- Updates its selected-menu state.
+- Restores its active execution when applicable.
 
-Use the existing Calculation module’s vertical navigation structure where
-possible rather than introducing an unrelated navigation pattern.
+Users must be able to switch calculation menu items during execution.
 
---------------------------------------------------
-4. DASHBOARD HEADING
---------------------------------------------------
+Navigating away must not cancel the backend calculation.
 
-Show:
-Breadcrumb: Home / Calculation Center / Net Income Tax
-Title: Net Income Tax
-Description: Check readiness, run calculations, and monitor progress.
+Avoid duplicate Calculation and Calculation Center navigation entries for
+the same workflow. Respect existing routing dependencies when updating
+the menu.
 
-Update these values for the selected calculation type.
+==================================================
+3. PRESERVE EXISTING MENU STYLING
+==================================================
 
-Left-align the title and description.
-Do not center the title separately from its description.
+Treat the existing Calculation menu as the visual source of truth.
 
-Use clear typography and comfortable spacing.
+Preserve its:
+- Background color.
+- Border color, width, and style.
+- Border radius.
+- Text color.
+- Font family, size, and weight.
+- Item height.
+- Padding and spacing.
+- Icon styling and alignment.
+- Selected state.
+- Hover state.
+- Keyboard focus state.
+- Shadows, if present.
 
---------------------------------------------------
-5. CALCULATION STAGES AT THE TOP — REQUIRED
---------------------------------------------------
+Reuse existing menu components and CSS classes.
 
-Place a full-width “Calculation Stages” card directly below the dashboard
-heading and any development notice, above Calculation Context.
+Do not introduce a new menu palette, corner radius, or selection appearance.
 
-Show these four stages horizontally:
+==================================================
+4. CALCULATION TITLE, SUMMARY, AND HISTORY ICON
+==================================================
+
+For Tax ETR, display:
+
+Title:
+“Tax ETR”
+
+One-line summary:
+“Effective tax rate calculation executed per L2 business once loaded in map,
+followed by a Corp. tax ETR PUG adjustment.”
+
+Use the supplied business wording.
+Do not reinterpret or replace “map” or “PUG” with guessed terminology.
+
+Other calculations must use their own configured descriptions.
+
+Preserve the content title styling already implemented:
+- Font family.
+- Font size.
+- Font weight.
+- Color.
+- Alignment.
+- Line height.
+- Margins and spacing.
+- Existing heading component or CSS class.
+
+Do not change title alignment merely to match an earlier mockup.
+
+Use the existing description/subtitle style for the one-line summary.
+
+Add a clock/history icon at the right side of the title/header area without
+changing the existing title presentation.
+
+Clock icon:
+- Accessible label: “View calculation history”.
+- Tooltip: “Calculation history”.
+- Opens history for the selected calculation.
+- Available before, during, and after execution.
+
+==================================================
+5. INITIAL SCREEN
+==================================================
+
+When no active execution needs to be restored, display:
+- Existing calculation title.
+- One-line description.
+- Compact Calculation Context container.
+- Sector dropdown.
+- Scenario dropdown.
+- Readiness feedback.
+
+Do not show an empty execution stepper before Calculate is clicked.
+
+Sector examples:
+- Institutional Clients Group (ICG)
+- Personal Banking and Wealth Management
+- Corporate
+- Others
+
+Scenario examples supplied for development:
+- KMF 2020 603IBL
+- KMF 2026ISA
+
+Use actual sector/scenario data from existing services.
+Preserve returned identifiers and names.
+Do not silently normalize scenario identifiers.
+
+Use the supplied examples only as explicitly labeled demo/test data if
+they are not present in the real service.
+
+Initial state:
+- Sector: “Select sector”.
+- Scenario: “Select scenario”.
+- Calculate hidden.
+- Execution container hidden.
+- Helper text:
+  “Select a sector and scenario to check calculation readiness.”
+
+Place dropdowns side by side where space permits and stack them on
+smaller screens.
+
+==================================================
+6. AUTOMATIC READINESS CHECK
+==================================================
+
+Once both sector and scenario are selected:
+- Automatically evaluate readiness for the exact combination of:
+  calculation identifier + sector identifier + scenario identifier.
+- Use existing backend readiness rules.
+- Display:
+  “Checking required configurations…”
+- Prevent duplicate requests for an unchanged selection.
+- Ignore or cancel stale responses when selections change.
+
+Do not require a separate initial Check Readiness click.
+
+If readiness passes:
+- Show:
+  “The selected sector and scenario meet the required configuration checks.
+   You can proceed with the calculation.”
+- Display an enabled Calculate button.
+
+If readiness fails:
+- Show “Not Ready”.
+- Keep Calculate hidden.
+- Expand a Readiness Issues panel below the context controls.
+- Show actual failed checks, missing configurations or inputs, and
+  backend-provided corrective guidance.
+- Provide “Retry Readiness”.
+
+If the readiness request fails:
+- Show:
+  “Unable to verify readiness. Please retry.”
+- Keep Calculate hidden.
+- Do not report prerequisite success or failure without a valid result.
+
+Changing calculation, sector, or scenario:
+- Invalidates previous readiness.
+- Clears previous readiness issues.
+- Hides Calculate until the new selection passes.
+- Clears unrelated execution details.
+
+Never show successful readiness alongside empty dropdown placeholders.
+
+==================================================
+7. CALCULATE ACTION
+==================================================
+
+When Calculate is clicked:
+- Submit execution for the exact context that passed readiness.
+- Prevent duplicate submissions.
+- Reveal the execution container ABOVE Calculation Context.
+- Display “Starting execution” while submission is pending.
+- Keep stages pending until backend status confirms activity.
+
+Once the backend returns the execution:
+- Display its actual run ID and status.
+- Associate it with its calculation, sector, and scenario identifiers.
+- Start live status/event monitoring.
+
+If submission fails:
+- Show the actual error.
+- Do not fabricate a run ID or running state.
+- Restore the appropriate action state.
+
+If the backend rejects the start because prerequisites changed:
+- Invalidate readiness.
+- Show returned readiness issues.
+- Require readiness to pass again.
+
+Bring the execution container into view when execution starts.
+Do not repeatedly reposition the page as live updates arrive.
+
+==================================================
+8. EXECUTION CONTAINER POSITION
+==================================================
+
+During execution, use this main content order:
+
+1. Existing title, description, and clock/history icon.
+2. Calculation Execution container.
+   - Run metadata.
+   - Four-stage stepper.
+   - Live events beneath the stepper.
+3. Calculation Context container.
+   - Actual sector and scenario.
+   - Readiness information.
+   - Disabled “Calculation Running” action.
+
+The execution container must be ABOVE the sector/scenario controls.
+
+Before execution:
+- Show context controls without the execution container.
+
+After execution starts:
+- Open the execution container at the top of the workflow.
+
+==================================================
+9. EXECUTION METADATA AND STEPPER
+==================================================
+
+Execution container heading:
+“Calculation Execution”
+
+Display:
+- Run ID.
+- Overall status.
+- Sector.
+- Scenario.
+- Start time, if available.
+- Elapsed duration, if available.
+- Last successful update time.
+
+Use four numbered stages:
 
 1. Validation
 2. Calculation
 3. Reconciliation
-4. Complete
+4. Completion
 
 Readiness is a pre-execution requirement, not a numbered execution stage.
 
-Before execution:
-- Show all stages as “Not Started”.
-- Show “Run a calculation after readiness passes to track execution.”
-- Do not show a stage as running before an execution is triggered.
+Stage states:
+- Pending.
+- Running.
+- Completed.
+- Failed.
 
-During execution:
-- Show run ID, overall run status, start time, and last status update.
-- Mark completed stages green.
-- Highlight the current running stage blue.
-- Keep future stages gray and pending.
-- Mark a failed stage red.
+Appearance:
+- Running: existing blue status styling, active indicator, spinner,
+  “Running” label.
+- Completed: existing success styling, checkmark, “Completed” label.
+- Pending: existing neutral styling, stage number, “Pending” label.
+- Failed: existing failure styling, error icon, “Failed” label.
 
-Stage indicators:
-- Completed: checkmark and “Completed”.
-- Running: spinner and “Running”.
-- Pending: stage number and “Pending”.
-- Failed: failure icon and “Failed”.
-- Not Started: stage number and “Not Started”.
+The currently running stage must be clearly highlighted in blue using the
+existing application theme.
 
-Use icons and labels alongside colors.
+Use actual backend state.
+Do not advance stages using artificial timers.
 
-Selecting a stage should display its details in the Live Stage Details
-panel below Calculation Context.
+==================================================
+10. LIVE EVENTS UNDER THE STEPPER
+==================================================
 
-Automatically show the active stage initially.
-If the user inspects another stage, retain a clear active-stage indicator
-and provide “View Active Stage” to return to it.
+Inside the execution container, directly below the stepper, display the
+active stage’s live events.
 
-Use actual backend status.
-Do not simulate execution by automatically advancing stages on timers.
+Headings:
+- “Validation — Live Events”
+- “Calculation — Live Events”
+- “Reconciliation — Live Events”
+- “Completion — Live Events”
 
---------------------------------------------------
-6. CALCULATION CONTEXT
---------------------------------------------------
+When Validation starts:
+- Highlight Stage 1 blue.
+- Show its actual validation events.
 
-Below Calculation Stages, show a “Calculation Context” card containing:
-- Sector dropdown.
-- Scenario dropdown showing the scenario name.
-- Check Readiness button.
-- Readiness status.
-- Last readiness check timestamp.
-- Run Calculation button.
+When Calculation starts:
+- Mark Validation completed.
+- Highlight Stage 2 blue.
+- Show Calculation events.
 
-Reuse existing data sources and sector/scenario dependencies.
+Apply the same behavior for Reconciliation and Completion.
 
-Initial state:
-- No sector or scenario selected.
-- Readiness: “Not Checked”.
-- Check Readiness disabled until required selections are complete.
-- Run Calculation disabled.
-- Message:
-  “Select a sector and scenario to check calculation readiness.”
+Event fields:
+Time | Activity | Status | Message
 
-Do not display “Ready to Calculate” when required selections are missing.
+Use actual backend events.
+Do not invent validations, task names, percentages, or results.
 
-Do not display “A calculation is already running for this selection”
-unless the selected context is valid and an active run is known.
+Support:
+- Incremental updates.
+- Deduplication using event IDs or available sequence information.
+- Chronological ordering.
+- Loading states.
+- “Waiting for stage events…” when no events are available.
+- Preservation of received events for the displayed run.
 
-During an active run:
-- Display the actual sector and scenario associated with that run.
-- Lock the controls if context changes are not supported during execution.
-- Never replace the run’s sector and scenario with empty placeholders.
-- Disable duplicate calculation requests.
-- Display a disabled “Calculation Running” button.
+Allow users to select a stage to inspect its events.
 
-When a calculation, sector, or scenario changes:
-- Reset readiness to “Not Checked”.
-- Clear previous readiness issues.
-- Clear unrelated run details.
-- Load runs only for the newly selected context.
-- Do not reuse readiness approval from another selection.
+When users inspect an earlier stage:
+- Keep the active-stage indicator visible.
+- Provide “View Active Stage”.
+- Do not forcibly replace the inspected stage on every update.
 
-Ignore or cancel stale readiness/status responses if the user has changed
-the selection before those responses arrive.
+If auto-scrolling is implemented:
+- Do not interrupt users reading older events.
+- Provide “Follow live events” to resume following updates.
 
---------------------------------------------------
-7. READINESS CHECK AND FAILURE DETAILS
---------------------------------------------------
+Use existing supported transport:
+- SSE, if provided.
+- WebSockets, if provided.
+- Configurable polling otherwise.
 
-When Check Readiness is clicked:
-- Check the current calculation, sector, and scenario.
-- Display “Checking Readiness” with a loading indicator.
-- Prevent duplicate requests.
-- Keep Run Calculation disabled.
+Inspect existing backend capabilities before choosing transport.
 
-When readiness passes:
-- Show green “Ready to Calculate”.
+==================================================
+11. NAVIGATION DURING EXECUTION
+==================================================
+
+Users can switch to other calculation menu items while an execution
+continues.
+
+Example:
+- Start Tax ETR.
+- Navigate to OCI Tax.
+- Use the OCI Tax screen.
+- Return to Tax ETR.
+- See the same Tax ETR run’s current live status.
+
+Execution lifecycle must not depend on whether its dashboard component
+is currently visible.
+
+When navigating away:
+- Clean up view-specific subscriptions where appropriate.
+- Do not cancel the backend run.
+- Do not mark the run complete or failed.
+- Retain the information needed to retrieve the run again.
+
+Store active-run references in an existing shared service/store rather than
+only in component-local state.
+
+Backend state is the source of truth.
+Client storage may retain run IDs but must not be treated as authoritative
+execution status.
+
+Do not create duplicate live subscriptions when navigating repeatedly.
+
+==================================================
+12. RESTORE THE LAST ACTIVE EXECUTION
+==================================================
+
+When returning to a calculation:
+- Retrieve its latest relevant active run using existing backend
+  capabilities and access rules.
+- Reconcile retained client references with backend state.
+- Display “Restoring execution status…” while loading.
+- Restore the execution container above context.
+- Populate its actual sector and scenario.
+- Show its current stage and available events.
+- Resume live updates.
+
+Do not start a new calculation when restoring a run.
+Do not reset a running job to Stage 1.
+
+If it completed while the user was elsewhere:
+- Show Completed.
+- Show the completion message.
+- Enable Close Execution.
+
+If it failed:
+- Show the failed stage and error details.
+
+If multiple active runs are supported:
+- Follow backend concurrency rules.
+- Restore the latest relevant active run by default.
+- Allow other accessible runs to be inspected through history.
+- Never mix metadata or events from different runs.
+
+If the required active-run lookup is unavailable:
+- Identify the missing integration explicitly.
+- Do not simulate persistence as if it were implemented.
+
+==================================================
+13. CONTEXT DURING AN ACTIVE RUN
+==================================================
+
+Show the displayed run’s actual sector and scenario.
+
+Disable editing of that run’s context while it is active.
+Display a disabled “Calculation Running” action.
+
+Do not disable the vertical calculation menu.
+
+Ensure dropdown values and option identifiers use matching types.
+Restore selected values after asynchronous option loading.
+
+Do not show “Select sector” or “Select scenario” for a populated active run.
+If necessary, temporarily show read-only context until dropdown options load.
+
+Prevent duplicate execution according to backend concurrency rules.
+
+==================================================
+14. COMPLETION AND CLOSING EXECUTION
+==================================================
+
+After all required stages complete successfully:
+- Mark all stages completed.
 - Show:
-  “All required configurations and inputs are available.”
-- Display the successful check timestamp.
-- Enable Run Calculation only when no active execution exists for the
-  selected context.
+  “Calculation completed successfully.”
+- Stop live monitoring for that terminal run.
+- Keep events available for review.
+- Enable Close Execution and/or a close icon on the execution container.
 
-When readiness fails:
-- Show red “Not Ready”.
-- Keep Run Calculation disabled.
-- Automatically expand a Readiness Issues panel below Calculation Context.
-- Show the actual failed prerequisites.
+Closing a completed execution panel:
+- Hides the execution container.
+- Returns to the title, description, and context-selection view.
+- Does not delete the run.
+- Does not remove history.
+- Does not cancel anything.
 
-Columns:
-Check | Failure Reason | Suggested Action
+Keep the run accessible through the history clock icon.
 
-Illustrative issue types:
-- Tax rate configuration missing for selected sector.
-- Required forecast inputs not loaded.
-- Scenario configuration incomplete.
-- Sector/entity mapping incomplete.
+Do not reopen a completed panel simply because the component rerenders
+after the user closed it.
 
-Use backend-provided failures, not hardcoded examples.
+On later navigation back:
+- Automatically restore an active execution, if one exists.
+- Otherwise show the context-selection view.
+- Keep completed runs accessible through history.
 
-Suggested actions should link to existing configuration screens only when
-valid routes and permissions are available. Otherwise show explanatory text.
+Failed terminal runs may also be closed after inspection.
 
-Provide “Check Again” after issues are resolved.
+Do not add cancellation for active executions unless supported by the
+backend and separately required.
 
-If the readiness request itself fails:
-- Display “Readiness Check Unavailable” or “Check Failed”.
-- Explain that readiness could not be verified.
-- Keep Run Calculation disabled.
-- Do not incorrectly report configuration failures or successful readiness.
+==================================================
+15. CALCULATION HISTORY
+==================================================
 
-Readiness errors must remain visible in the panel, not only in a toast.
+Clicking the clock icon opens a right-side drawer titled:
+“Calculation History”
 
---------------------------------------------------
-8. STARTING A CALCULATION
---------------------------------------------------
+Show accessible runs for the selected calculation.
 
-Enable Run Calculation only when:
-- Required context selections are valid.
-- Readiness has passed for that exact context.
-- No conflicting execution is already active.
-- No start request is currently being submitted.
+Fields:
+- Run ID.
+- Sector.
+- Scenario.
+- Status.
+- Started time.
+- Duration, if available.
+- View Run action.
 
-When clicked:
-- Submit the execution request.
-- Show a “Starting Calculation” state.
-- Prevent duplicate clicks.
-- Display the returned run ID and actual execution state.
-- Update the top stepper as backend status becomes available.
+Order newest first using backend-supported ordering.
 
-If the start request fails:
-- Show the actual error.
-- Do not fabricate a run ID or running state.
-- Restore the appropriate action state based on current readiness.
+Provide:
+- Loading state.
+- Empty state:
+  “No calculation history is available.”
+- Error state and retry.
+- Pagination/load-more when supported.
+- Drawer close action.
 
-If the backend rejects execution because prerequisites changed:
-- Invalidate readiness.
-- Show the returned issues.
-- Require readiness to pass again.
+View Run:
+- Loads the selected execution in the top execution container.
+- Populates its actual context.
+- Clearly identifies historical-run inspection.
+- Does not trigger a calculation.
+- Resumes live monitoring if the selected run is still active.
 
---------------------------------------------------
-9. LIVE STAGE DETAILS
---------------------------------------------------
+Keep historical-run context separate from a draft new-run selection.
 
-Below Calculation Context and any readiness issues, display:
-“Live Stage Details”
+If another run is active, provide a clear way to return to that active run.
 
-For the active stage, show:
-- Stage name and status.
-- Current activity.
-- Start time.
-- Elapsed time.
-- Last successful status update.
-- Backend-provided progress, if available.
+==================================================
+16. ERROR AND CONNECTION HANDLING
+==================================================
 
-Example heading:
-“Stage 2: Calculation — Running”
-
-Task table:
-Task | Status | Started | Duration | Progress
-
-Use the actual tasks available for the calculation.
-
-Illustrative tasks:
-- Load validated inputs.
-- Apply tax rates.
-- Calculate sector tax expense.
-- Persist calculation results.
-
-Highlight the running task using a light-blue row background and a spinner.
-
-Do not assign the same stage-level progress percentage to every task.
-Show task-specific progress only when provided by the backend.
-
-Do not mark all tasks as running unless they are actually running in parallel.
-
-If progress is unavailable:
-- Show an indeterminate indicator or “Progress unavailable”.
-- Do not invent a percentage.
-
-If timestamps or durations are unavailable:
-- Show “Not available” rather than misleading values.
-
-Execution failures:
-- Mark the failed stage and task red.
-- Expand the error details.
-- Display the actual failure reason.
-- Show corrective guidance if available.
-- Keep later stages unexecuted.
+Stage failure:
+- Mark the actual failed stage.
+- Expand its error details.
+- Leave later stages unexecuted.
 - Do not show successful completion.
 
-Status refresh failures:
-- Preserve the last known execution state.
-- Display “Unable to refresh status”.
-- Show the last successful update timestamp.
-- Do not treat a failed status request as a failed calculation.
+Live update failure:
+- Preserve the last known status.
+- Show:
+  “Unable to refresh live status.”
+- Display the last successful update time.
+- Retry/reconnect using existing application behavior.
+- Do not treat a disconnected update stream as a failed calculation.
 
-Use backend-supported push updates or configurable polling.
-Stop polling after a terminal execution state.
-Clean up polling/subscriptions when leaving the relevant view.
+Use “Not available” where required data is missing.
+Do not fabricate progress, timestamps, durations, or events.
 
---------------------------------------------------
-10. OUTPUTS AND EXECUTION HISTORY
---------------------------------------------------
+==================================================
+17. PRESERVE MAIN CONTENT CONTAINER STYLING
+==================================================
 
-Place Outputs and Execution History side by side on sufficiently wide
-screens and stack them on smaller screens.
+Use the existing Calculation module’s container styling as the visual
+source of truth.
 
-Outputs:
-- Before successful completion:
-  “Results will be available after successful completion.”
-- After successful completion:
-  Show available result summaries and supported output actions.
-- On failure:
-  Do not present incomplete outputs as successful results.
+Preserve existing:
+- Background color.
+- Border color.
+- Border width and style.
+- Border radius.
+- Padding.
+- Margins.
+- Width and layout conventions.
+- Shadow/elevation.
 
-Execution History:
-- Display runs for the selected context.
-- Include:
-  Run ID
-  Scenario
-  Status
-  Started
-  Duration
-- Provide clear loading, empty, and error states.
-- Selecting a historical run should load its stages and details without
-  starting a new calculation.
-- Clearly label historical-run inspection so it is not confused with the
-  current live execution.
+Do not introduce a new page background or a contrasting card design.
 
---------------------------------------------------
-11. DEVELOPMENT / DEMO MODE
---------------------------------------------------
+The new execution and context containers must visually match existing
+application containers.
 
-Keep development data separate from real execution data.
+==================================================
+18. PRESERVE TITLE AND CONTROL STYLING
+==================================================
 
-If demo mode is enabled:
-- Show a compact notice:
-  “Demo mode: sample data only. No real calculation is executed.”
-- Use coherent sample sector and scenario selections.
-- Make demo readiness and execution states consistent with those selections.
-- Clearly identify sample runs.
-- Do not automatically show a running sample job with empty selections.
-- Keep demo simulation logic separate from production execution logic.
+Preserve existing content-title styling exactly.
 
-Use a restrained pale-amber notice rather than an oversized saturated
-yellow banner.
+Reuse existing:
+- Heading components/classes.
+- Description styles.
+- Dropdown components.
+- Buttons.
+- Status badges.
+- Icons.
+- Loading indicators.
+- Tables/event lists.
+- Drawer components.
 
-Do not display the demo notice in normal production execution mode.
+New execution, readiness, and history components must follow the existing
+visual language.
 
---------------------------------------------------
-12. COLOR PALETTE AND VISUAL STYLE
---------------------------------------------------
+Do not introduce arbitrary fonts, colors, shadows, or border radii.
 
-Reuse existing theme tokens where available.
-Apply these proposed colors locally where new styling is required.
+Use existing blue styling for the running stage.
+Use existing success, pending, warning, and failure styling for other states.
 
-Primary sidebar:
-- Background: #071426
-- Text: #E2E8F0
-- Muted icons: #94A3B8
-- Selected navigation: #0066CC
-- Selected text: #FFFFFF
+Use status text and icons alongside colors.
 
-Secondary vertical calculation menu:
-- Background: #FFFFFF
-- Right border: #DCE3EC
-- Default text: #334155
-- Selected background: #EAF3FF
-- Selected border/accent: #0070C9
-- Selected text: #005AA3
+==================================================
+19. STYLING PRIORITY
+==================================================
 
-Page and cards:
-- Page background: #F4F7FB
-- Card background: #FFFFFF
-- Borders: #DCE3EC
-- Headings: #172B4D
-- Body text: #334155
-- Secondary text: #64748B
+Apply this priority order:
 
-Actions and running states:
-- Primary button: #0070C9
-- Hover: #005AA3
-- Active-stage background: #EFF6FF
-- Active-stage border: #2563EB
-- Active-stage text/icon: #1D4ED8
+1. Existing shared components and styles.
+2. Existing Calculation module CSS classes.
+3. Existing application theme tokens.
+4. Minimal locally scoped styling where necessary.
 
-Success:
-- Text/icon: #15803D
-- Background: #EAF7EF
-- Border: #BBE3C8
+Earlier suggested hexadecimal colors, fixed 8px radii, title alignment,
+and spacing values are illustrative only.
 
-Failure:
-- Text/icon: #B42318
-- Background: #FEF3F2
-- Border: #FECDCA
+Do not apply those values when they differ from the existing implementation.
 
-Warning/demo notice:
-- Text/icon: #B54708
-- Background: #FFFAEB
-- Border: #FEDF89
+Avoid global CSS overrides.
+Do not change unrelated screens.
 
-Pending and disabled:
-- Text/icon: #64748B
-- Background: #F1F5F9
-- Disabled button background: #E2E8F0
-- Disabled button text: #64748B
+If an exact component does not exist, create a locally scoped component
+that matches the existing application.
 
-Progress:
-- Track: #E2E8F0
-- Fill: #0070C9
-
-Use:
-- Existing application font.
-- Readable form labels and status text.
-- Consistent spacing.
-- Approximately 20–24px card padding where space permits.
-- Subtle shadows and 8px corner radii.
-- Clear focus indicators.
-- Status icons and text, not color alone.
-
-Avoid excessive compression of the dashboard into tiny text and narrow rows.
-
---------------------------------------------------
-13. RESPONSIVE BEHAVIOR
---------------------------------------------------
+==================================================
+20. RESPONSIVE AND ACCESSIBLE BEHAVIOR
+==================================================
 
 Desktop:
-- Primary sidebar, vertical calculation menu, and dashboard appear together.
-- The stage stepper is above Calculation Context.
+- Primary navigation, vertical calculation menu, and dashboard remain visible.
+- Execution appears above context after Calculate.
+- History opens in a right-side drawer.
 
 Smaller screens:
-- Allow the secondary menu to collapse into an accessible navigation drawer.
-- Stack context controls and lower cards.
-- Let stage indicators wrap or scroll without truncating important labels.
-- Preserve the desktop vertical-menu implementation; do not replace it with
-  horizontal calculation tabs as the default desktop layout.
+- Secondary navigation can collapse into an accessible drawer.
+- Context controls stack.
+- Stage indicators wrap or scroll without losing important labels.
+- History can use a full-width sheet.
 
---------------------------------------------------
-14. ACCEPTANCE CHECKLIST
---------------------------------------------------
+Provide:
+- Keyboard-accessible navigation and stage selectors.
+- Accessible labels for clock and close icons.
+- Visible focus states consistent with existing styling.
+- Status labels that do not rely on color alone.
 
-Verify all of the following:
+==================================================
+21. DEMO DATA
+==================================================
 
-[ ] Selecting Calculation Center displays a vertical calculation menu.
-[ ] The old horizontal calculation tabs are removed.
-[ ] Selecting a calculation loads the correct dashboard.
-[ ] Calculation Stages appears above Calculation Context.
-[ ] The title and description are left-aligned.
-[ ] Missing selections never show successful readiness.
-[ ] Active runs always show their actual sector and scenario.
-[ ] Readiness failure automatically opens an explanatory panel.
-[ ] Run Calculation stays disabled until readiness passes.
-[ ] Duplicate execution is prevented.
-[ ] The active stage and active task are clearly highlighted.
-[ ] Stage/task status comes from the backend outside explicit demo mode.
-[ ] Unknown progress is not fabricated.
-[ ] Refresh errors are distinct from execution failures.
-[ ] Outputs and history reflect the selected context.
-[ ] Demo data is visibly labeled and internally consistent.
-[ ] Existing unrelated Calculation functionality remains unchanged.
+Use sample data only in explicitly labeled development/demo mode.
 
-Implement these changes using the existing project architecture.
-Identify missing backend integrations explicitly instead of silently
+If mock runs or events are displayed:
+- Show a compact notice using existing warning styling:
+  “Demo mode: sample data only. No real calculation is executed.”
+- Keep sector, scenario, readiness, and execution states consistent.
+- Keep simulation logic separate from production integration.
+
+Do not present mock execution as real backend execution.
+
+==================================================
+22. ACCEPTANCE CHECKLIST
+==================================================
+
+Verify:
+
+Navigation:
+[ ] Calculation opens the existing-style vertical calculation menu.
+[ ] Calculation types are not displayed as horizontal tabs.
+[ ] Users can switch calculations during execution.
+
+Initial selection:
+[ ] Title styling remains unchanged.
+[ ] Each calculation displays its configured summary.
+[ ] Initial view shows sector/scenario controls without an empty stepper.
+[ ] Readiness runs automatically after both selections.
+[ ] Calculate appears only after readiness passes.
+
+Execution:
+[ ] Calculate opens execution ABOVE the context controls.
+[ ] Running stage is blue using existing application styling.
+[ ] Live events appear beneath the stepper.
+[ ] Status/events come from the backend.
+[ ] Duplicate executions and subscriptions are prevented.
+
+Navigation persistence:
+[ ] Leaving a calculation does not cancel its execution.
+[ ] Returning restores the same active run and current stage.
+[ ] Sector/scenario values match the restored run.
+[ ] A run completed while away is shown as completed on return.
+
+Closing and history:
+[ ] Completed/failed terminal panels can be closed.
+[ ] Closing does not delete the run.
+[ ] Clock icon opens calculation history.
+[ ] View Run inspects a run without starting another execution.
+
+Styling:
+[ ] Menu background, borders, radius, colors, and states match the existing module.
+[ ] Main containers retain existing background, borders, radius, and colors.
+[ ] Existing title typography and alignment are preserved.
+[ ] New panels and controls match existing components.
+[ ] No unrelated global styling or functionality changes occur.
+
+Implement within the existing project architecture.
+Explicitly identify missing backend integrations instead of silently
 substituting simulated production behavior.
