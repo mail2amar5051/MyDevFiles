@@ -1,0 +1,23 @@
+Update only the Calculation Execution container in the current design:
+
+- Remove the run metadata: Run ID, overall status badge, sector, scenario,
+  start time, elapsed time, last update time, and restored-run banner.
+- Directly beneath “Calculation Execution”, show only the four stages:
+  1. Validation
+  2. Calculation
+  3. Reconciliation
+  4. Completion
+- Each stage should display its circular indicator, stage name, and status:
+  Pending, Running, Completed, or Failed.
+- Keep the active stage’s circle and text blue, without a surrounding
+  rectangular box, background, or shadow.
+- Keep live events directly beneath the stages.
+
+Preserve the existing container styling, context dropdowns, eye-icon
+history actions, navigation, and live-status restoration. Retain run
+metadata internally; remove it only from this container’s visible UI.
+
+In Calculation History, replace each “View Run” text action with an eye icon.
+Use the existing icon-button styling and add a “View run” tooltip.
+Clicking the eye icon must open that run’s details without starting a new calculation.
+
