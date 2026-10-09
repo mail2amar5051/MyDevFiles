@@ -1,23 +1,121 @@
-Update only the Calculation Execution container in the current design:
+Update the current Calculation screen with these changes only.
+Preserve all existing styling and functionality unless explicitly changed below.
 
-- Remove the run metadata: Run ID, overall status badge, sector, scenario,
-  start time, elapsed time, last update time, and restored-run banner.
-- Directly beneath “Calculation Execution”, show only the four stages:
-  1. Validation
-  2. Calculation
-  3. Reconciliation
-  4. Completion
-- Each stage should display its circular indicator, stage name, and status:
-  Pending, Running, Completed, or Failed.
-- Keep the active stage’s circle and text blue, without a surrounding
-  rectangular box, background, or shadow.
-- Keep live events directly beneath the stages.
+1. MOVE CALCULATION CONTEXT ABOVE EXECUTION
 
-Preserve the existing container styling, context dropdowns, eye-icon
-history actions, navigation, and live-status restoration. Retain run
-metadata internally; remove it only from this container’s visible UI.
+Place Calculation Context first and Calculation Execution beneath it.
 
-In Calculation History, replace each “View Run” text action with an eye icon.
-Use the existing icon-button styling and add a “View run” tooltip.
-Clicking the eye icon must open that run’s details without starting a new calculation.
+Page order:
+- Existing title and description.
+- Calculation Context.
+- Calculation Execution, when a run is started, restored, or opened from history.
 
+Keep sector and scenario visible and locked for the displayed active run.
+
+2. REPLACE THE LIVE-EVENT GRID WITH AN ACTIVITY LIST
+
+Remove the live-event data grid, column headings, and table-cell borders.
+
+Under the stepper, display:
+“[Selected stage name] — Live Activity”
+
+Show backend activities as readable statements, one per line, with a
+status icon on the left:
+
+- Running: animated blue spinner and activity statement.
+- Completed: green checkmark and completion statement.
+- Failed: red failure icon and actual error statement.
+- Pending: neutral indicator, only when reported by the backend.
+
+Illustrative appearance:
+
+✓ L2 business inputs loaded — Completed
+✓ Tax configuration resolved — Completed
+◌ Calculating effective tax rates for L2 businesses…
+◌ Applying corporate tax adjustment…
+
+Use actual backend statements, not hardcoded example activities.
+
+3. UPDATE EACH ACTIVITY IN PLACE
+
+When an activity starts:
+- Display its statement with a loading spinner.
+
+When that activity completes:
+- Replace its spinner with a checkmark on the same line.
+- Display its backend completion message.
+- If no completion message is provided, retain its statement and append
+  “Completed”.
+
+When it fails:
+- Replace its spinner with a failure icon.
+- Display the backend error message.
+
+Use stable run, stage, and activity identifiers.
+Do not append duplicate lines for every update.
+Do not let stale events revert terminal activities to Running.
+
+4. SUPPORT PARALLEL EXECUTION
+
+If the backend reports multiple activities running simultaneously:
+- Show each activity on a separate line.
+- Give each its own spinner.
+- Update each independently.
+- Completing one must not stop the other activities’ spinners.
+
+Do not force parallel activities into a sequential display.
+Do not infer activity status or completion using timers.
+
+5. PRESERVE THE STEPPER AND EXISTING BEHAVIOR
+
+Keep the four stages:
+1. Validation
+2. Calculation
+3. Reconciliation
+4. Completion
+
+Keep the running stage’s circle and text blue without a surrounding box.
+
+Display the selected stage’s activity list beneath the stepper.
+Automatically follow the active stage unless the user is inspecting another
+stage; provide “View Active Stage” to return.
+
+Keep completed activities available for review.
+
+Preserve:
+- Hidden execution metadata.
+- Navigation between calculations during execution.
+- Restoration of active runs when returning.
+- Closing terminal execution panels.
+- Clock-icon history.
+- Eye-icon actions for viewing historical runs.
+
+6. PRESERVE EXISTING STYLING
+
+Reuse existing components, theme tokens, typography, icons, and spacing.
+
+Do not change:
+- Menu styling.
+- Content title styling.
+- Container background.
+- Borders or border radius.
+- Existing application colors.
+
+Use existing blue, success, failure, and neutral status styles.
+
+Keep the activity list simple: no individual task cards, boxed rows,
+or replacement grid.
+
+7. LIVE UPDATE HANDLING
+
+Use the existing backend event/status integration.
+Identify missing activity identifiers or lifecycle fields instead of
+fabricating behavior.
+
+If updates disconnect:
+- Preserve the last known activity states.
+- Show a connection warning.
+- Do not mark activities completed or failed because updates stopped.
+
+Do not force auto-scroll while users read earlier activities.
+Clean up subscriptions appropriately without cancelling backend execution.
