@@ -1,50 +1,31 @@
-Apply these visual changes only. Preserve existing functionality.
+Update only the section-heading styling on the current Calculation page.
 
-1. EXPAND THE CALCULATION CENTER CARD GRID
+Make these headings match the existing application’s previous
+container/section titles:
+- Calculation Context.
+- Calculation Execution.
+- Latest Output.
+- Live Activity headings, using the existing subsection-title style.
 
-Make the landing-page card grid occupy the full available main content
-width to the right of the primary sidebar.
+Reuse the existing heading component or CSS classes. Match:
+- Font family.
+- Font size.
+- Font weight.
+- Text color.
+- Line height.
+- Padding and margins.
+- Icon size, color, and alignment, where existing titles use icons.
 
-- Keep three cards per row on wide desktop screens.
-- Expand the cards evenly across the available width.
-- Apply this to both Tax Calculations and Standalone Calculations.
-- Remove fixed card widths or restrictive grid-wrapper widths that leave
-  unused space on the right.
-- Preserve consistent gaps, existing page padding, and equal card heights
-  within each row.
-- Use two columns or one column on smaller screens.
-- Do not overlap the sidebar or introduce horizontal page scrolling.
+Do not introduce new heading colors or approximate styling.
+Remove local overrides causing these headings to look different.
 
-“Full width” means the available main content area, not the entire viewport.
-Do not change each card into a separate full-width row on desktop.
+Use the existing section-title style—not the larger page-title style.
+Keep the Tax ETR page title unchanged.
 
-2. REPLACE THE GREEN READINESS BANNER
+Keep helper text such as “Locked while run is active” and badges such as
+“Previous execution output” visually separate from the heading, using
+existing secondary-text and badge styles.
 
-Remove the solid green banner displaying “Required configuration met.”
-
-Replace it with a simple inline statement:
-
-✓ Required configuration met.
-
-- Use the existing green success checkmark.
-- Use normal body text styling for the statement.
-- Keep the background transparent.
-- Remove banner borders, shadows, rounded background, and excessive padding.
-- Keep the line beneath the context dropdowns.
-- Preserve readiness logic and Calculate-button enablement.
-
-3. MATCH THE EXISTING CALCULATION CONTAINER BACKGROUND
-
-Use the existing Calculation module’s container background as the source
-of truth.
-
-- Reuse its existing background class or theme token for the new landing
-  cards and detail-page containers.
-- Remove newly introduced background overrides that cause a different tint.
-- Keep Calculation Context, Calculation Execution, and Latest Output
-  consistent with the existing container styling.
-- Preserve existing borders, border radii, title styling, and spacing.
-- Do not guess a new color or change global application styles.
-
-Do not alter the stepper, live activities, navigation, history, output,
-downloads, or backend behavior.
+Preserve status colors for running, completed, pending, and failed states.
+Do not change layout, backgrounds, borders, readiness, execution, output,
+history, or any functionality.
