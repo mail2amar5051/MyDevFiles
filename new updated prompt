@@ -1,31 +1,52 @@
-Update only the section-heading styling on the current Calculation page.
+Make the Calculation Center more colorful using restrained,
+professional color accents. This is a visual-only enhancement.
 
-Make these headings match the existing application’s previous
-container/section titles:
-- Calculation Context.
-- Calculation Execution.
-- Latest Output.
-- Live Activity headings, using the existing subsection-title style.
+Preserve:
+- Existing layout and full-width three-column calculation grid.
+- Main content background, card backgrounds, borders, and border radii.
+- Existing section-title typography and application navigation.
+- All calculation, readiness, execution, search, and favorite behavior.
+- Unrelated screens and global application styles.
 
-Reuse the existing heading component or CSS classes. Match:
-- Font family.
-- Font size.
-- Font weight.
-- Text color.
-- Line height.
-- Padding and margins.
-- Icon size, color, and alignment, where existing titles use icons.
+Apply these changes:
 
-Do not introduce new heading colors or approximate styling.
-Remove local overrides causing these headings to look different.
+1. Summary tiles
+   - Calculations available: subtle pale-blue background,
+     blue icon treatment, and emphasized count.
+   - Running now: subtle cyan treatment when calculations are running.
+     Keep the zero-running state neutral.
+   - Reuse existing theme tokens wherever possible.
 
-Use the existing section-title style—not the larger page-title style.
-Keep the Tax ETR page title unchanged.
+2. Calculation cards
+   - Keep existing card surfaces.
+   - Add a thin category-colored top border:
+     blue for Tax and teal for Standalone.
+   - Place each card icon inside a softly tinted circular background
+     matching its category.
+   - Keep titles dark and descriptions readable.
+   - Add a subtle category-colored border and shadow on hover.
+   - Do not assign a different bright color to every calculation.
 
-Keep helper text such as “Locked while run is active” and badges such as
-“Previous execution output” visually separate from the heading, using
-existing secondary-text and badge styles.
+3. Filters and favorites
+   - Use the existing primary blue for the selected filter.
+   - Give unselected filters a subtle hover treatment.
+   - Use an amber-filled star for selected favorites.
+   - Keep unselected stars neutral and outlined.
 
-Preserve status colors for running, completed, pending, and failed states.
-Do not change layout, backgrounds, borders, readiness, execution, output,
-history, or any functionality.
+4. Readiness and execution states
+   - Initial/select-context state: neutral gray.
+   - Ready: green check icon and text.
+   - Configuration required: amber warning icon and text.
+   - Running: blue progress indicator and text.
+   - Failed: red error icon and text.
+   - Always include a readable label; do not rely on color alone.
+   - Derive every state from existing application data.
+   - Do not display mock readiness or execution states.
+
+5. Open actions
+   - Use consistent primary-blue text and arrow styling.
+   - Add a light-blue hover background and visible keyboard focus.
+
+Keep the result polished and restrained:
+white/neutral surfaces, blue and teal category accents,
+and semantic colors reserved for actual statuses.
