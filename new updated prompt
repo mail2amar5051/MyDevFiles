@@ -1,229 +1,35 @@
-Fix the Calculation Center execution experience end to end, including the backend API, frontend live activity, execution stepper, calculation output visibility, and homepage layout.
+Analyze the calculation process in this codebase and recommend interim
+progress stages I can show to users. Do NOT modify any code.
 
-Inspect the existing implementation first and make the code changes. Do not stop at recommendations or a high-level plan. Follow the project’s existing architecture, styling, and API conventions, and avoid unrelated refactoring.
+CONTEXT
+- Backend: Java Spring Boot + Oracle DB.
+- The process starts at [ENDPOINT or SERVICE CLASS, e.g. CalculationService.process()].
+- Status is stored in [TABLE NAME].[STATUS COLUMN] with numeric codes
+  (e.g. 1 = CREATED ... 5 = COMPLETED). Existing code branches on these codes.
 
-PRIMARY PRIORITY: LIVE ACTIVITY
-The UI must show the actual activity currently executing in the backend, with a visible spinner directly underneath that activity. Do not display the entire predefined activity list when a run starts.
+WHAT I NEED
+1. Trace the full calculation flow from the entry point through every service,
+   repository, and helper it calls. Give the call chain in order, with class
+   and method names.
+2. List every place the status is set or checked, with file and line, and what
+   each existing status code means.
+3. Break the flow into logical stages a user would understand (e.g. validating
+   input, loading data, tax calculation, FX calculation, aggregation, saving
+   results, generating report). For each stage give:
+   - Stage name and a user-facing message (e.g. "Running FX calculation…")
+   - Exact class and method where the stage starts and ends
+   - Which existing status it falls between
+   - Whether it is likely long-running (DB-heavy, loops over large data,
+     external calls) and why
+4. Recommend which stages deserve their own interim status. Skip steps that
+   finish too fast to be visible.
+5. Propose how to add the interim statuses without breaking existing
+   status-based logic: new non-colliding codes, or a separate SUB_STATUS column.
+   Recommend one and explain why.
+6. Flag any risks: transactions that would hide status updates until commit,
+   parallel or async steps, retries, and anywhere a status change could
+   affect existing branching.
 
-1. INVESTIGATE THE CURRENT EXECUTION FLOW
-
-Trace the complete flow:
-- Trigger calculation.
-- Receive the run ID.
-- Retrieve or subscribe to execution status.
-- Retrieve activity updates.
-- Map backend state to the execution stepper.
-- Retrieve and display calculation output.
-- Update the Calculation Center homepage status.
-
-Inspect the backend endpoints, DTOs, status mappings, execution lifecycle, frontend services, components, templates, and polling/subscription logic involved.
-
-Determine whether incorrect states originate in the backend, frontend mapping, or both. Fix the actual causes rather than hiding symptoms.
-
-Do not invent backend activity names or assume execution steps. Use the real activities performed by the calculation engine.
-
-2. FIX THE BACKEND ACTIVITY AND STATUS CONTRACT
-
-The backend must accurately expose the execution state of the current run.
-
-Use existing response fields where appropriate. If the contract is insufficient, extend it consistently with the existing architecture.
-
-The response must provide enough information to identify:
-- Run ID.
-- Overall run status.
-- Current execution phase.
-- Activities that actually started.
-- Stable activity identifiers.
-- Actual activity names or user-facing labels.
-- Activity execution order.
-- Activity status.
-- Start and completion timestamps, where available.
-- Failure details, where applicable.
-- Whether final output is available.
-
-Requirements:
-- An activity must not be reported as completed before it actually completes.
-- Pending or predefined activities must not be represented as execution history.
-- Skipped or not-applicable activities must not be treated as successfully executed activities.
-- Aggregation must remain pending until it actually starts.
-- Overall success must not be reported before all required processing and result aggregation finish.
-- Output availability must reflect committed, retrievable results for that run.
-- Status, activities, and output must consistently refer to the same run ID.
-- The homepage and calculation detail page must use consistent status semantics.
-
-If the backend currently returns a full activity definition list, distinguish activity definitions from actual execution events. The live activity UI must be driven by actual execution events or actual started activity records.
-
-3. FIX LIVE ACTIVITY RENDERING
-
-Current problem:
-The UI displays multiple predefined activities immediately, including repeated “Not applicable for this calculation” entries. The real running activity and its spinner are not displayed correctly.
-
-Required behavior:
-- Reset the previous run’s activity state when a new run is accepted.
-- Associate all activity updates with the active run ID.
-- Initially show a neutral message such as “Waiting for execution to start” until the backend reports the first actual activity.
-- Do not insert that waiting message as a completed backend activity.
-- Add an activity only after the backend reports that it started.
-- Display the real backend activity name.
-- Show a visibly animated spinner directly underneath the running activity’s label, with clear running text.
-- Keep the spinner visible until the backend reports that activity completed, failed, or was cancelled.
-- Replace the spinner with the correct terminal indicator when that activity ends.
-- Retain completed activities from the current run as execution history.
-- Add subsequent activities progressively as they actually start.
-- Do not show future activities, placeholders, or “Not applicable” entries.
-- Do not duplicate activities across repeated status updates.
-- Use stable activity IDs for rendering and merging updates.
-- Preserve backend execution order.
-- If the backend supports concurrent activities, display each genuinely running activity with its own spinner. Do not force a false single-active-activity model.
-- Show progress percentages only when the backend provides meaningful progress. Otherwise use an indeterminate spinner.
-- Do not mark an activity completed merely because it disappears from a partial update.
-- Handle errors, cancellation, and empty activity responses without fabricating execution progress.
-
-The spinner must be beneath the active activity, not only beside the overall phase title or calculation button.
-
-Use the existing UI component library and accessibility conventions. Ensure the running status is understandable without relying on animation or color alone.
-
-Illustrative layout only; use actual backend activity names:
-
-LIVE ACTIVITY
-
-✓ [Actual completed activity]
-  Completed
-
-[Actual running activity]
-    [animated spinner]
-  In progress…
-
-Do not hardcode these illustrative activity names into the application.
-
-4. FIX THE EXECUTION STEPPER
-
-Current problem:
-“Result Aggregation” is marked completed while “Validation / Execution” is still running.
-
-The stepper must reflect the backend’s actual phase state:
-
-- Readiness running:
-  Readiness = Running
-  Validation / Execution = Not started
-  Result Aggregation = Not started
-
-- Validation / Execution running:
-  Readiness = Completed
-  Validation / Execution = Running
-  Result Aggregation = Not started
-
-- Aggregation running:
-  Readiness = Completed
-  Validation / Execution = Completed
-  Result Aggregation = Running
-
-- Successful run completion:
-  All required phases = Completed
-
-Failure and cancellation:
-- Mark the affected phase accurately.
-- Do not mark downstream phases completed.
-- Keep phases that never started pending or explicitly not executed, consistent with existing UX conventions.
-
-Additional requirements:
-- Do not infer completion from an empty activity list.
-- Do not initialize phases as completed by default.
-- Do not use stale state from a previous run.
-- Handle genuinely optional/skipped phases explicitly without falsely claiming they executed.
-- Derive the stepper from one consistent backend-to-UI state mapping.
-
-5. HIDE CALCULATION OUTPUT UNTIL THE CURRENT RUN COMPLETES
-
-Current problem:
-Previous execution output remains visible while a new calculation is running.
-
-Required behavior:
-- Hide and clear the displayed Calculation Output section once a new run is accepted.
-- Keep it hidden while the run is queued, validating, executing, or aggregating.
-- Show it only after the current run has successfully completed and output is available.
-- Fetch or select output using the current run ID.
-- Never fall back to a previous run’s output during active execution.
-- Do not show partial output as final output.
-- If completion is reported before output becomes retrievable, show an appropriate results-loading state rather than stale data.
-- If the run fails or is cancelled, show the outcome separately without showing old output as if it belongs to the current run.
-- Preserve intentional historical-run viewing, if supported, but keep historical output clearly separate from the active-run view.
-
-6. FIX POLLING / SUBSCRIPTIONS AND STALE UPDATES
-
-Use the existing update mechanism unless a change is necessary.
-
-Ensure:
-- Only the intended polling/subscription lifecycle is active for the selected run.
-- Updates from an older run cannot overwrite the active run’s state.
-- Out-of-order responses cannot regress newer state.
-- Repeated responses do not duplicate activities.
-- Navigation away cleans up polling, subscriptions, and timers.
-- Reopening an active run restores its real backend state.
-- Transient network failures do not falsely mark the calculation completed or failed.
-- Terminal run status stops execution polling appropriately.
-- If output retrieval is still pending, handle that separately without leaving execution polling running indefinitely.
-- Backend status endpoints do not return stale cached execution state.
-
-7. SIMPLIFY THE CALCULATION CENTER HOMEPAGE
-
-Remove these four summary tiles:
-- Calculations available.
-- Running now.
-- Completed today.
-- Needs attention.
-
-Remove the “Favourites” filter button.
-
-Keep:
-- Search calculations.
-- All filter.
-- Tax filter.
-- Standalone filter.
-- Calculation cards.
-- Individual calculation statuses.
-- Recent activity.
-
-Adjust layout and spacing so removing these controls does not leave empty gaps.
-
-Remove related frontend state, bindings, or requests only if they are no longer used elsewhere.
-
-Do not remove the star icons on individual calculation cards as part of this task; removing those icons is outside the requested scope.
-
-8. TESTS AND ACCEPTANCE CRITERIA
-
-Add or update appropriate backend and frontend tests.
-
-Cover at least:
-1. A new run does not display the entire predefined activity list.
-2. Only backend-reported started activities appear.
-3. The running activity has a visible spinner underneath its label.
-4. The spinner remains present while the activity is running.
-5. Completion replaces the spinner with the correct completed indicator.
-6. Failure/cancellation removes the running indicator and shows the correct outcome.
-7. Repeated updates do not duplicate activities.
-8. Old-run or out-of-order responses do not corrupt the current state.
-9. Aggregation stays pending during validation/execution.
-10. Aggregation becomes running only when the backend reports it started.
-11. All phases become completed only after successful completion.
-12. Output stays hidden during the active run.
-13. Output displayed after completion belongs to the current run.
-14. Previous output never appears as the active run’s result.
-15. Refreshing or reopening an active run restores accurate activity and phase state.
-16. Polling/subscriptions are cleaned up correctly.
-17. The four homepage summary tiles and Favourites button are removed.
-18. Search, remaining filters, calculation cards, and recent activity still work.
-
-Run the relevant tests, build, and lint checks available in the project. Report what passed, what failed, and anything you could not verify. Do not claim checks passed unless you ran them.
-
-DELIVERABLES
-
-After implementing the fixes, provide:
-- A concise summary of the root causes found.
-- The files changed and the purpose of each change.
-- Any API contract changes, with an example based on the actual implementation.
-- A description of the corrected backend-to-UI state flow.
-- Tests/checks executed and their results.
-- Any remaining limitations or required follow-up.
-
-Prioritize backend-driven Live Activity and the correctly positioned running spinner, then stepper accuracy, output gating, and homepage cleanup.
+OUTPUT
+A clear report with the call chain, a table of recommended stages, the proposed
+status codes, a simple transition diagram (current vs. proposed), and the risks.
