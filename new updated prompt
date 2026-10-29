@@ -1,55 +1,52 @@
-Add a view switch between the classic Calculation screen and the new Calculation Center
-in our Angular + PrimeNG app. Inspect the existing routes and components first, reuse
-what exists, and avoid unrelated refactoring.
+Update the Calculation Center page (Angular + PrimeNG). Change ONLY the items below;
+keep everything else exactly as it is today (layout, background, section headings,
+cards, routing, history table, run stages panel).
 
-WHAT TO BUILD
-- A text link with a swap icon. It must NOT look like a button: no background,
-  no border, no shadow.
-  - Classic Calculation page: "Switch to new Calculation Center"
-  - Every Calculation Center page (card list and calculation detail): "Switch to classic view"
-- Build it as one small reusable component, e.g. <app-view-switch [target]="'new' | 'classic'">,
-  used on both screens.
+1. HEADER AND FILTERS
+- Remove the search bar.
+- Add a text link "Switch to classic view" with a swap icon
+  (pi pi-arrow-right-arrow-left) in the top-right corner, aligned with the breadcrumb.
+  - Style: blue, dotted underline, no background or border (a link, not a button).
+  - Click: opens the classic Calculation page.
+- Remove the count numbers from the All / Tax / Standalone buttons.
+- Keep the "Tax Calculations" and "Standalone Calculations" headings with their cards.
 
-PLACEMENT
-- Top right of the page header, vertically centred with the page title.
-- Same position on both screens, so users find it in the same place.
+2. CARD LETTER TILES
+- Replace each card icon with a coloured letter tile.
+  - Tile: 52px rounded square (radius 14px), diagonal gradient, white bold letters,
+    soft shadow in its own colour.
+  - NI #6366F1→#4338CA (Net Income Tax), OCI #14B8A6→#0F766E (OCI Tax),
+    ALPL #F59E0B→#C2410C (ALLL/PULC), CE #EC4899→#BE185D (TCE),
+    COC #8B5CF6→#6D28D9 (COC).
+  - Unknown calculations: initials of the name, slate #64748B→#334155.
+- Build one reusable monogram component driven by a single config map.
 
-STYLE
-- PrimeNG: <p-button [link]="true" icon="pi pi-arrow-right-arrow-left" iconPos="left">
-  or a plain <a> styled the same way.
-- Text: 13–14px, font-weight 600–700, primary blue (theme primary colour).
-- Underline: a subtle dotted underline under the label only (not the icon),
-  e.g. border-bottom: 1.5px dotted (primary at ~40% opacity).
-- Hover: solid underline and slightly darker blue. Focus: visible focus ring.
-- Spacing: 6–8px gap between icon and label. No padding box, no background.
-- Tooltip (pTooltip, position bottom):
-  - Classic page: "Run calculations with live readiness and progress"
-  - New page: "Open the classic Calculation screen"
+3. HISTORY ON THE CALCULATION CENTER PAGE
+- Add a "History" button (outlined, pi pi-history) at the right end of the
+  All / Tax / Standalone row. It opens the existing right-side history drawer.
+- Top of the drawer:
+  - Calculation type chips: "All" plus one per calculation, each with its small
+    letter tile. Use the same entitled-calculation list as the cards.
+  - Period: 30 days | 60 days | 90 days (default 30).
+  - The title reflects the selection, e.g. "OCI Tax – Calculation history".
+- Keep the existing table columns: Scenario Name, Start Time, End Time,
+  Created By, Status.
+- Add an Actions column with a download icon on every row (tooltip
+  "Download audit report").
+  - It downloads that run's audit report.
+  - It is disabled on in-progress rows.
+- Backend: the history API accepts calculationTypeId (or ALL) and days (30/60/90),
+  filters server-side, and returns only entitled calculations.
 
-BEHAVIOUR
-- Classic → new:
-  - If a calculation is open in the classic screen (e.g. NET_INCOME_ETR, OCI),
-    open the same calculation's detail page in the Calculation Center.
-  - Otherwise open the Calculation Center card list (#/CALC_CENTER).
-- New → classic:
-  - From a calculation detail page, open that calculation in the classic screen.
-  - From the card list, open the classic Calculation page.
-- Use one shared mapping between classic calculation codes (NET_INCOME_ETR, OCI,
-  ALLL_PULC, TCE, COC, Tax ETR) and Calculation Center calculation IDs, in both
-  directions. If a calculation has no match, fall back to the target screen's
-  landing page.
-- If a calculation run is active in the new view, still allow switching. The run
-  continues on the server; do not cancel anything.
-- Use the words "new" and "classic" in the UI. Never use "old".
+4. HISTORY ROW CLICK
+- Completed, failed or cancelled rows: open the existing right-side run detail
+  panel (status, start/end, scenario, run ID, all stages with durations,
+  Audit report button).
+- In-progress rows: no "View progress" link.
+  - The "In progress" pill is clickable (pointer, small ›, tooltip "Open live progress").
+  - Clicking the pill or the row closes the drawer and navigates to that
+    calculation's main page (#/CALC_CENTER/<calculationId>) with the live run loaded.
+  - It never opens the right panel.
 
-ACCESSIBILITY
-- Use a real <a> or <button>, keyboard reachable, with aria-label matching the visible text.
-- The icon is decorative (aria-hidden="true").
-
-DONE WHEN
-- The link appears in the same spot on the classic page, the Calculation Center
-  card list and the calculation detail page.
-- Each link routes correctly in both directions, including the same-calculation mapping.
-- It looks like a link, not a button.
-- Unit tests cover the mapping and both directions. Build and lint pass.
-  Report what you ran.
+Done when all four work, nothing else changed, and unit tests, build and lint
+pass. Report what you ran.
