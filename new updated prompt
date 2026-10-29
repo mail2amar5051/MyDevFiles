@@ -1,35 +1,72 @@
-Analyze the calculation process in this codebase and recommend interim
-progress stages I can show to users. Do NOT modify any code.
+Implement the Calculation Center UI changes below in our Angular + PrimeNG app (Spring Boot backend). Inspect the existing code first, reuse what exists, keep current behaviour working, and avoid unrelated refactoring.
 
-CONTEXT
-- Backend: Java Spring Boot + Oracle DB.
-- The process starts at [ENDPOINT or SERVICE CLASS, e.g. CalculationService.process()].
-- Status is stored in [TABLE NAME].[STATUS COLUMN] with numeric codes
-  (e.g. 1 = CREATED ... 5 = COMPLETED). Existing code branches on these codes.
+1. Old Calculation page → link to the new Calculation Center
 
-WHAT I NEED
-1. Trace the full calculation flow from the entry point through every service,
-   repository, and helper it calls. Give the call chain in order, with class
-   and method names.
-2. List every place the status is set or checked, with file and line, and what
-   each existing status code means.
-3. Break the flow into logical stages a user would understand (e.g. validating
-   input, loading data, tax calculation, FX calculation, aggregation, saving
-   results, generating report). For each stage give:
-   - Stage name and a user-facing message (e.g. "Running FX calculation…")
-   - Exact class and method where the stage starts and ends
-   - Which existing status it falls between
-   - Whether it is likely long-running (DB-heavy, loops over large data,
-     external calls) and why
-4. Recommend which stages deserve their own interim status. Skip steps that
-   finish too fast to be visible.
-5. Propose how to add the interim statuses without breaking existing
-   status-based logic: new non-colliding codes, or a separate SUB_STATUS column.
-   Recommend one and explain why.
-6. Flag any risks: transactions that would hide status updates until commit,
-   parallel or async steps, retries, and anywhere a status change could
-   affect existing branching.
+	•	On the existing Calculation page (e.g. Net Income ETR, route #/CEN/:id), add a primary button "Open Calculation Center" at the top of the content area.
+	•	Clicking it routes to the Calculation Center card page (#/CALC_CENTER).
+	•	Do not change anything else on the old page.
 
-OUTPUT
-A clear report with the call chain, a table of recommended stages, the proposed
-status codes, a simple transition diagram (current vs. proposed), and the risks.
+2. Calculation Center card page (no functional change)
+
+	•	Keep the cards (Net Income Tax, OCI Tax, ALLL/PULC, TCE, COC), the filter buttons (All / Tax / Standalone) and search.
+	•	Show a status pill and scenario chip on a card ONLY when a scenario is selected or a run exists. Otherwise show just the name, description and Open.
+
+3. Calculation detail page: new stacked layout
+
+Top to bottom:
+
+a) Scenario bar (full-width card)
+
+	•	One row: Scenario dropdown, Reset link, a short hint/status line, and the Run calculation button on the right.
+	•	Readiness runs automatically when a scenario is selected (keep existing logic).
+	•	Run is enabled only when readiness passes.
+	•	Scenario and Reset are locked while a run is active.
+	•	After completion, the button becomes "Reset & start new".
+
+b) Execution card (full width, below the scenario bar)
+
+	•	Keep the existing stepper: Readiness → Validation Execution → Result Aggregation, with the same states.
+	•	Below the stepper, show ONE panel only. It displays the grid for the current phase:
+	•	After scenario selection: the Readiness checks (all 7 criteria with Met / Not met / Warning / Checking, descriptions and time), as today.
+	•	After Run: the same panel switches to Validation Execution and lists that phase's steps as the backend reports them.
+	•	Then it switches to Result Aggregation.
+	•	REUSE the existing readiness panel/grid component for all three phases. Build it as one generic component (inputs: title, summary pills, rows of {status, name, description, time}) so the execution phases look and behave exactly like readiness.
+	•	Running row: spinner directly under the step name. Show only steps the backend reports as started.
+	•	Completed stepper steps show "View". Clicking one shows that phase's grid in the same panel. While running, the panel follows the live phase.
+	•	Readiness not met: highlight the Not met rows, show the "Check again" button in the panel header, and keep Run disabled.
+	•	If the "Data Changed Since Last Run" warning is present, confirm before running.
+	•	Remove the separate "Live execution status" section; the single panel replaces it.
+
+c) Output card (new, at the end)
+
+	•	Hidden or neutral ("Results appear here when a run completes") until the current run completes.
+	•	Then show the output table for that run ID, with "Download Excel" and "Audit report" buttons.
+	•	Never show a previous run's output during a new run.
+
+4. Styling (modern, clean)
+
+	•	Page: light grey background (about #F5F6FA). Each section (scenario bar, Execution, Output) is a white card with a 1px light border, 16–20px rounded corners, a soft shadow, and 20–24px padding. Leave about 20px vertical gap between cards.
+	•	Page header: calculation name as a large bold title, with a category tag (Tax/Standalone) and a status pill next to it. The description sits below in grey text, and a small "Audit report" button is on the right.
+	•	Stepper: three steps in a row, joined by thin connector lines.
+	•	Each step has a round icon (number when pending, check when done, red ✕ when readiness is not met, blue filled when running) with the step name and a small status line under it (e.g. "Passed · 7 of 7", "Running · 1 of 2 done").
+	•	The current step is highlighted with a light blue background box, and a small pointer connects it to the panel below.
+	•	Phase panel:
+	•	A light blue-tinted header row: phase name, summary pills (e.g. "5 of 7 met", "2 not met", "1 warning"), and time/meta text on the right.
+	•	Below it, a grid with columns: status icon | name (bold) + description (grey) | status pill | time.
+	•	The running row gets a light blue background; Not met rows get a light red background with red description text.
+	•	Status pill colours: green = Met/Completed, red = Not met, amber = Warning, blue with spinner = Running/Checking, grey = Pending/Not started.
+	•	Buttons:
+	•	The primary button (Run calculation, Open Calculation Center) is solid blue with white text.
+	•	Secondary buttons (Check again, Download Excel) are outlined blue.
+	•	Disabled buttons are grey.
+	•	Fonts: a monospace font for scenario names, run IDs and times.
+	•	Old Calculation page button: place "Open Calculation Center" at the top right of the page header/content card, as a solid blue primary button.
+	•	PrimeNG: use these components where they fit: p-dropdown/p-select, p-button, p-tag, p-table, p-confirmDialog, p-progressSpinner.
+
+5. Done when
+
+	•	The old page button routes to the cards.
+	•	The layout is stacked as above, and a single Execution panel shows Readiness, then Validation, then Aggregation using the same grid component.
+	•	Output appears only after completion.
+	•	Existing readiness, Reset and run polling still work.
+	•	Unit tests, build and lint pass. Report what you ran and the results.
