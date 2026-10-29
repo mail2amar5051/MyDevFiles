@@ -1,4 +1,4 @@
-Update the Calculation Center page (Angular + PrimeNG). Change ONLY the items below;
+Not Update the Calculation Center page (Angular + PrimeNG). Change ONLY the items below;
 keep everything else exactly as it is today (layout, background, section headings,
 cards, routing, history table, run stages panel).
 
@@ -62,6 +62,31 @@ Keep everything else unchanged, and don't show this card for any other calculati
 - Disabled rows are greyed out, with the tooltip "Not available yet".
 - Clicking a download icon downloads that report for the selected scenario.
 - Changing the scenario refreshes the rows; Reset disables both.
+
+
+In the Calculation Center detail page, change ONLY the Result Aggregation panel
+(step 3, under the stepper). Keep all styling and everything else exactly as it is.
+
+1. Remove the separate "Output" section below Execution, including its Audit report
+   button.
+2. "Calculation output" stage inside Result Aggregation:
+   - While output is being prepared: keep the current spinner and text.
+   - When output data with rows is received: show "Results are available · <n> rows",
+     plus two buttons on the right of the stage:
+     a) "View data" (outlined, eye icon): expands the data grid inside the stage,
+        directly under it. The button becomes "Hide data" to collapse it.
+     b) "Download segment summary report" (primary, download icon): downloads the
+        tax segment summary report for this run.
+   - When the output has no rows: keep the current message
+     ("The calculation completed, but the tax segment summary has no rows…")
+     with no buttons and no grid.
+3. Data grid: reuse the existing output table (same columns, data, formatting and
+   paging), moved inside the Result Aggregation stage. Show a small header line:
+   "Tax segment summary · <scenario>" and "Run ID <id>".
+4. No Audit report button anywhere in Result Aggregation.
+
+Done when the Output section is gone, the grid shows inside step 3 only when data
+exists, View/Hide and Download work, and nothing else changed.
 
 
 
