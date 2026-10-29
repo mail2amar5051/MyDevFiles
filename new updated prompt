@@ -50,3 +50,18 @@ cards, routing, history table, run stages panel).
 
 Done when all four work, nothing else changed, and unit tests, build and lint
 pass. Report what you ran.
+
+
+For Net Income Tax only, add a "Reports" card on the Calculation Center detail page.
+Keep everything else unchanged, and don't show this card for any other calculation.
+
+- Place it to the right of the Scenarios card, in the same row and the same card style.
+- It shows two rows, each with the report name and a download icon:
+  1. Pre-Tax report: enabled once a scenario is selected.
+  2. Post-Tax report: enabled only after the Tax Segment Recon report is generated.
+- Disabled rows are greyed out, with the tooltip "Not available yet".
+- Clicking a download icon downloads that report for the selected scenario.
+- Changing the scenario refreshes the rows; Reset disables both.
+
+
+
