@@ -1,167 +1,204 @@
-CALCULATION CENTER – ROUND 2 CHANGES (Angular + PrimeNG, Spring Boot)
+CALCULATION CENTER – MULTI-SCENARIO READINESS (TABS) + WARNINGS CONFIRMATION
+Angular + PrimeNG front end. Spring Boot back end only where noted.
 
-Implement ONLY the changes below. Keep all other layout, behaviour, colours and fonts
-as they are today. Use the application's existing text styles, colours, buttons and
-spacing everywhere so the new parts look native to the app.
-
-STATUS TAG (use one component everywhere)
-- Small rounded p-tag with a dot + text.
-- Running = blue, Completed / Met = green, Failed = red, Warning = amber,
-  Pending / Not started = grey.
-
-=====================================================================
-A. LANDING PAGE
-=====================================================================
-
-A1. History panel (popover from the History icon button)
-- Keep it as a popover anchored under the History button (~540px wide), no full-screen
-  mask, closes on ✕ / Esc / outside click.
-- Header: "Calculation history" (14px semibold) + ✕, thin bottom border.
-- Controls row: calculation dropdown (default "All calculations", entitled types only)
-  · 30d / 60d / 90d segmented control (selected = light blue) · search "Scenario or user".
-- Status chips below: All / Running / Completed / Failed (selected = solid blue).
-- Partial load warning as a small amber alert box:
-  "⚠ Some history could not be loaded: <calculations>."
-- Day headers: small (10.5px), bold, uppercase, grey on a light grey bar
-  ("TODAY · 5 NOV", "SUN · 25 OCT").
-- Each row:
-  - 26px calculation monogram
-  - Line 1: "<Calculation> · <scenario>" followed INLINE by the status tag
-  - Line 2 (grey): "<time> · <user> · <duration>"
-  - Right: download icon button for Completed rows
-    (tooltip "Download Post-Tax Segment report")
-- Footer: "<n> runs · last <n> days" (left), "Only calculations you have access to" (right).
-
-A2. History → click a Completed row
-- Show details inside the SAME popover (same size).
-- Header: "← Run details" + ✕ ("←" returns to the list).
-- Summary line: monogram · "<Calculation> · <scenario>" + status tag inline;
-  grey line "<date> · <start>–<end> · <duration> · <user> · Run <runId>";
-  download icon on the right.
-- Then ONLY the execution steps: header "EXECUTION STEPS · <n> OF 10 COMPLETED" and one
-  row per stage (status icon, stage name, duration).
-- Remove the Run ID / Readiness / Stages boxes and remove the "Open <Calculation>" button.
-
-A3. History download = the same saved Post-Tax Segment report for that run ID
-    (see Backend).
+SCOPE – READ FIRST
+- Change ONLY the Readiness area of the calculation page, the scenario capsules' status
+  look, and the "Run with warnings" confirmation dialog, as described below.
+- Do NOT change: page layout, header, sidebar, breadcrumb, Switch to classic view pill,
+  Reports card, Reset / Run calculation buttons and their positions, Execution stages
+  (still shown only after Run), Result Aggregation / output table, History, persistence,
+  APIs other than the fields listed under BACKEND, or any other workflow.
+- REMOVE the current multi-scenario implementation where each scenario gets its own
+  stacked/side-by-side readiness panel (one panel per scenario). Replace it with the
+  single tabbed panel below. Also remove any toast/popup that says
+  "all scenarios passed / some failed".
+- Single scenario uses the SAME component (one tab). There must be one code path.
 
 =====================================================================
-B. NEW / CLASSIC SWITCH (both screens)
+1. STATE MODEL (per scenario)
 =====================================================================
-Pill button styled like the existing "What's New" button, top-right of the breadcrumb
-row. One shared component with variant 'primary' | 'outline'. Remove the old link/toggle.
+status: 'checking' | 'ready' | 'warning' | 'failed'
+  - failed  = at least one criterion Failed
+  - warning = no Failed, at least one Warning
+  - ready   = all criteria Met
+counts: met, warning, failed (out of 7 criteria from config/API)
+checkedAt: timestamp
 
-- Classic calculation screen → primary:
-  "✦ Try the new Calculation Center →"
-  background linear-gradient(90deg, #1D5FD6 0%, #5B2D9E 55%, #B0246B 100%),
-  white bold text, gold sparkle (#F5B642), shadow 0 4px 12px -4px rgba(91,45,158,.55).
-  Hover: slightly brighter, raise 1px. Click → new Calculation Center.
-- New Calculation Center → outline:
-  "↩ Switch to classic view"
-  white fill, 1.5px gradient border (same gradient), text #5B2D9E, no shadow.
-  Hover: #F6F2FF background. Click → classic screen.
-- Both: height 34px, padding 0 16px, border-radius 999px, 13px, keyboard focus ring.
-
-=====================================================================
-C. CALCULATION SCREEN
-=====================================================================
-
-C1. Scenario selector
-- Selected scenarios stay INSIDE the dropdown field as capsules
-  (p-multiSelect display="chip"), followed by the "Add scenarios" placeholder.
-- Each capsule has its own colour, assigned by selection order (background / text /
-  border):
-  1 blue   #EEF4FF / #1D4FB8 / #C9DAF8
-  2 teal   #E8F7F4 / #0F766E / #B9E6DD
-  3 purple #F3EEFF / #6D28D9 / #DCCEFB
-  4 amber  #FFF4E5 / #9A4A00 / #F6D9AE   (then repeat)
-- While a run is active: capsules show a lock instead of ✕, field read-only.
-
-C2. Scenario persistence (option b)
-- Save the selected scenario(s) AND the last readiness result with its timestamp in
-  sessionStorage, per calculation type.
-- When the user returns, restore both and DO NOT call readiness again.
-  Hint under the selector: "↺ Restored from your last visit. Readiness result from
-  <time>; it re-runs only on Check again, Reset or a new scenario."
-  Readiness header shows "Last checked <time>".
-- Re-run readiness only when the user changes the scenario, clicks Reset or clicks
-  "Check again". (The backend still re-checks readiness when Run is clicked, so a
-  stale cached result can never start an invalid run.)
-
-C3. Reports card
-- Download icon BEFORE each label: "⤓ Pre-Tax Segment", "⤓ Post-Tax Segment".
-- On click: that button shows a spinner + "Generating…" and is disabled; under the
-  buttons show a shimmer bar (light blue animated gradient):
-  "Generating <report> report for <scenario>…".
-- When the file is downloaded: green box "✓ <report> report downloaded." for 4 seconds,
-  then hide. On error: red box with the error message.
-- Post-Tax Segment is enabled after a successful run (see Backend).
-
-C4. Readiness phase
-- Do NOT show the execution stage list during readiness.
-- While checking: only ONE spinner (in the hint "Checking readiness…"). Stepper shows
-  "Readiness · Checking…". Criteria rows show grey name + grey skeleton line, nothing
-  on the right (remove the right-side per-row spinners).
-- When done: Met / Warning tags on the right of each criterion; header shows
-  "<n> Met" and "<n> Warning" tags, "Checked <time>" and a "↻ Check again" button.
-
-C5. Warning dialog "Run on unchanged data?"
-- Header: amber circle "!" icon + title + ✕, bottom border.
-- Body (13px): "Data for <scenario> hasn't changed since the last run. Running again
-  replaces the previous results." Then a grey info box: "Last run  <date time> ·
-  Run <runId>". Then the required checkbox "I understand this re-runs the calculation
-  on unchanged data."
-- Footer on a light grey background, right aligned: Cancel (outlined grey) and
-  Run anyway (primary, disabled until the checkbox is ticked).
-
-C6. Execution phase
-- Show the 10 stages only after Run calculation is clicked / a run is triggered.
-- Stage name 12.5px semibold (bold); message under it 12px normal weight, grey (same
-  as readiness messages); duration on the right in monospace.
-- Current stage: light blue row, blue name, spinner icon, live timer.
-- Pending stages: grey name, "Pending".
-- This styling must apply WHILE running, not only after completion.
-
-C7. Calculation output (Result Aggregation) – same rows, modern table
-- Keep the data exactly as today: one row per Entity / Tax Segment / Reporting Line,
-  columns PQ1…PQn in the same order. No grouping or summaries.
-- Section header: "Result Aggregation · <scenario>" + "<n> rows" tag; right side:
-  search (entity, segment, line), "Run <runId>", Hide data, Segment summary report.
-- Table header: two rows – a year band row (2026 / 2027 / 2028 …, small uppercase
-  grey, spanning its quarter columns) and the column row ("PQ1" bold + "3Q2026" grey).
-  Header stays visible on vertical scroll.
-- Freeze Entity, Tax Segment and Reporting Line on horizontal scroll (p-table frozen
-  columns) with a thin right border and soft shadow; visible horizontal scrollbar.
-- Reporting Line shown as a small grey label (EBT / ETR / LLR / Taxes).
-- Numbers right aligned, monospace, negatives in red (#B4233C), values as returned.
-- Rows 34px, zebra striping, thin dividers, light blue hover, thin vertical divider
-  between years.
-- Paginator below: "Rows per page" dropdown with 100 / 150 / 200 / 250
-  (default 150), "Showing x–y of n", page buttons. Keep the choice for the session.
-- No full-screen view for now.
+Overall (derived):
+  checking  = any scenario 'checking'
+  anyFailed = any scenario 'failed'
+  readyCount = scenarios with 'ready' or 'warning'
+  warnScenarios = scenarios with 'warning'
+Keep the existing readiness API; call it per scenario (parallel) and update each tab as
+its result arrives.
 
 =====================================================================
-D. BACKEND
+2. DESIGN TOKENS (use existing app variables where they exist)
 =====================================================================
-D1. After every successful run, generate the Post-Tax Segment report and save it to
-    /home/frm/App-Data/FRM-bpst/tce/calculation (path from configuration).
-D2. File name: <calculation_type>_<run_id>.xlsx
-D3. Availability: enable the Post-Tax Segment button after run completion. The
-    Post-Tax Segment button and the History download both fetch the SAME saved file by
-    run ID. If the file is missing, regenerate it once, then serve it.
-D4. Report content: Run ID, Calculation Type, Scenario Name, Run Date and Time, data rows.
-D5. Download endpoint keyed by runId; enforce entitlements; clear 404 message when a
-    run has no report.
-D6. Readiness response includes the last run date/time and run ID (for C5).
+Green #1E8A4C (text #17663A) · Amber #E0A100 (text #8A4B00) · Red #E0445F (text #B4233C)
+Blue #1D5FD6 (text #1D4FB8) · Checking dot #A3B8DE
+Text #1F2937 · Secondary text #6B7280 · Borders #E6E9EE · Row dividers #F3F5F8
+Soft panel background #F7F9FB · Card radius 10px · Button radius 6px
+Font: app font; scenario names in the app's monospace.
+No filled red/green/amber backgrounds anywhere in this area. Colour lives only in small
+icons, dots, the left accent line and short status text.
 
 =====================================================================
-DONE WHEN
+3. SCENARIO CAPSULES (inside the Scenarios multiselect)
 =====================================================================
-- Every item above works; nothing else changed.
-- Tests cover: history popover + run details showing only steps; history download =
-  Post-Tax Segment file for that run ID; switch component variants; capsule colours;
-  persistence (restore without readiness call; re-check on change / Reset / Check
-  again); report generating / success / error states; single spinner in readiness;
-  stages hidden until Run; running-state stage styling; paginator options
-  100/150/200/250 with default 150; frozen columns.
+- Keep p-multiSelect display="chip" and the existing "Add scenarios" placeholder.
+- Capsule style: white background, 1px #DDE2E9 border, radius 999px,
+  padding 3px 6px 3px 8px, text #1F2937 monospace 12px.
+- Before the name: an 8px status dot: green ready · amber warning · red failed ·
+  #A3B8DE checking. Remove the old coloured capsule fills / left-edge colour.
+- Remove (✕) button: 16px circle, background #F1F3F6, text #6B7280.
+- While a run is active keep existing lock behaviour.
+
+Hint line under the selector (one line, 10px below field):
+  checking       spinner + "Checking readiness for <m> scenario(s)…" (grey)
+  any failed     red   "✕ <k> of <m> scenarios not ready. Fix or remove it to run."
+  warnings only  amber "⚠ All scenarios ready · <k> with warnings."
+                 (1 scenario: "⚠ Ready with warnings.")
+  all ready      green "✓ All <m> scenarios ready." (1 scenario: "✓ Ready.")
+
+Header status tag next to the calculation name:
+  "Checking readiness" (blue) · "Not ready" (red) · "Ready · warnings" (amber) ·
+  "Ready to run" (green)
+
+Run calculation button: disabled while checking or anyFailed; otherwise enabled.
+
+=====================================================================
+4. STEPPER – READINESS STEP (only text/colour change)
+=====================================================================
+  checking   blue ring "1", sub-text "Checking <m> scenarios…" (1: "Checking…")
+  anyFailed  red ring "1", light red box, red sub-text "<n> of <m> scenarios ready"
+  otherwise  green ✓, sub-text "All <m> scenarios ready" (1: "All criteria met"),
+             green connector line to Execution
+Box behind the current step: #F3F6FA.
+
+=====================================================================
+5. READINESS PANEL (inside the Execution card, under the stepper)
+=====================================================================
+5a. Summary bar (text only)
+- Full width, background #F7F9FB, no border, radius 8px, padding 10px 14px,
+  3px left accent line (inset box-shadow): blue while checking, red if anyFailed,
+  green otherwise. Margin-bottom 12px. Font 12.5px.
+- Do NOT list scenario names, dots or spinners here (the tabs show them).
+- Left text (bold part coloured blue/red/green, rest #4B5563 normal):
+    checking:      **Checking readiness · <done> of <m> done**  Results appear in each tab
+                   as they finish.
+    anyFailed:     **<n> of <m> scenarios ready**  <x> not ready[ · <y> with warnings].
+                   Open the red tab to see why.
+    warnings only: **<m> of <m> scenarios ready**  <y> with warnings. You can run.
+                   (1 scenario: **Ready**  <w> warnings. You can run.)
+    all ready:     **<m> of <m> scenarios ready**  You can run the calculation.
+                   (1 scenario: **Ready**  You can run the calculation.)
+- Right side (only after checking finishes): "Checked <HH:mm>" (#6B7280, 11.5px) and an
+  outlined "↻ Check again" button (height 28px, border #DDE2E9) that re-checks ALL
+  selected scenarios.
+
+5b. Tab bar
+- White card (border #E6E9EE, radius 10px) containing the tab bar and the active tab body.
+- Tab bar: white, bottom border #EEF1F5, horizontal padding 6px, scrolls horizontally
+  if tabs overflow (no wrapping).
+- One tab per selected scenario, in selection order. Tab: padding 12px 14px, 12.5px.
+  Content: 16px status icon · scenario name (monospace, #1F2937) · short grey count text.
+    checking  blue spinner icon · "Checking…"
+    ready     green ✓ circle · "7/7 Met"
+    warning   amber ! circle · "<n> warning(s)"
+    failed    red ✕ circle · "<n> failed"
+  Count text is plain #6B7280 text, NOT a coloured badge.
+- Active tab: 2px #1D5FD6 bottom border (always blue, regardless of status).
+- Default active tab when results are complete: first failed tab; else first warning
+  tab; else first tab. While checking keep the first tab. User clicks switch tabs freely;
+  do not auto-switch after the user has clicked a tab.
+
+5c. Tab body – the 7 criteria of the active scenario
+- Rows: padding 11px 18px, gap 14px, divider #F3F5F8.
+- Left 16px icon: green ✓ Met · amber ! Warning · red ✕ Failed.
+- Middle: criterion name 12.5px semibold #1F2937; message under it 12px normal #6B7280
+  (backend message, e.g. account numbers / last run date).
+- Right: status as plain coloured text with a small dot: "Met" green, "Warning" amber,
+  "Failed" red. No pill backgrounds, no row background colour, no right-side spinners.
+- While that scenario is checking: grey criterion names + a grey skeleton bar per row,
+  nothing on the right.
+- Criteria order and texts come from config/API (no hard-coding).
+
+5d. Adding / removing scenarios
+- Add a scenario → new tab appears in 'checking'; check ONLY that scenario.
+- Remove a capsule → remove its tab immediately and re-evaluate summary, hint, stepper,
+  header tag and Run button WITHOUT re-checking the others.
+- Reset → existing behaviour (clears everything).
+
+=====================================================================
+6. "RUN WITH WARNINGS?" CONFIRMATION (replaces the old unchanged-data dialog)
+=====================================================================
+When: user clicks Run calculation, nothing failed, and at least one scenario has warnings
+(this includes "Data Changed Since Last Run"). If no warnings → run immediately, no dialog.
+If anyFailed → Run is disabled, dialog never opens. One dialog per Run click, never one
+per scenario or per warning.
+
+Component: p-dialog (modal) or p-confirmDialog with custom template.
+- Width 620px (max 92vw), radius 14px, shadow 0 30px 70px -20px rgba(15,31,61,.45).
+- Mask rgba(15,31,61,.32) with backdrop-filter: blur(1.5px).
+- Header: padding 16px 20px; amber "!" circle icon (28px, bg #FFF3DE, text #8A4B00) +
+  title "Run with warnings?" (15px semibold) + close ✕; background
+  linear-gradient(90deg,#FFF6E5,#FFFFFF); bottom border #F6E3BF.
+- Body padding 14px 18px.
+
+Body content:
+- Intro line (13px):
+    1 scenario:  "<scenario> has <n> warning(s). Review before running."
+    2+:          "<k> of <m> scenarios have warnings (<total> in total). Review them
+                 before running."
+- 1 scenario: list the warnings directly in one white bordered box (no scenario header).
+- 2+ scenarios: small uppercase label "WARNINGS BY SCENARIO" (11px, #6B7280); if 3 or
+  more groups also show "Expand all · Collapse all" links on the right.
+  One group per scenario WITH warnings:
+    group box: white, border #EEF1F5, radius 10px, margin-bottom 8px
+    group header: white, bottom divider #F3F5F8, padding 9px 12px:
+      chevron ▾/▸ · scenario name (monospace) · amber tag "<n> warning(s)"
+    rows: padding 10px 12px, amber ! icon, warning name (12.5px semibold),
+      message under it (12px, #6B7280) – include last run date/time and Run ID for
+      "Data Changed Since Last Run".
+  First 2 groups expanded, the rest collapsed.
+  List area max-height ~330px with its own scroll; the dialog never exceeds the screen.
+- Scenarios without warnings: one line "✓ <n> scenario(s) with no warnings: <names>"
+  (green ✓, 12px, #4B5563).
+- Acknowledgement (required) in a #F7F9FB box, radius 8px, padding 10px 12px:
+    1 scenario: "I understand and want to run with these warnings."
+    2+:         "I have reviewed the warnings for <k> scenario(s) and want to run."
+- Footer: white, top border #EEF1F5, right aligned, padding 12px 18px:
+    "Cancel" (outlined grey) – closes, nothing changes.
+    Primary: "Run anyway" (1 scenario) / "Run anyway · <m> scenarios" (counts ALL
+    selected scenarios that will run). Disabled until the checkbox is ticked.
+    Checkbox resets to unticked each time the dialog opens.
+- Esc / ✕ = Cancel. Focus starts on Cancel. Keyboard accessible.
+
+=====================================================================
+7. BACKEND (only if not already returned)
+=====================================================================
+- Readiness API per scenario returns: scenarioName, criteria[{code, name, status
+  (MET|WARNING|FAILED), message}], checkedAt.
+- For "Data Changed Since Last Run" include lastRunAt and lastRunId in the message data.
+- No other API changes.
+
+=====================================================================
+8. DONE WHEN
+=====================================================================
+- Old per-scenario stacked panels and pass/fail toasts are gone; one tabbed panel works
+  for 1, 2, 3+ scenarios with one code path.
+- Capsule dots, hint, header tag, stepper, summary bar, tabs and rows all follow the
+  states above and stay in sync while results arrive one by one.
+- Default tab rule works; user tab clicks are respected.
+- Add scenario checks only the new one; remove capsule re-evaluates without re-check;
+  Check again re-checks all.
+- Run disabled while checking or any failed; warnings open the single grouped dialog;
+  no warnings → runs directly.
+- Dialog texts/button labels correct for 1, 2 and 3 scenarios; scroll works with many
+  warnings; checkbox gates the primary button.
+- Nothing else on the page or in other workflows changed (verify Reports, Execution
+  stages, Result Aggregation, History, Switch view, persistence still behave as before).
+- Unit tests for: state derivation, default tab selection, add/remove behaviour,
+  Run enable rules, dialog content for 1/2/3 scenarios and checkbox gating.
 - Build, lint and existing tests pass. Report what you ran and any API fields added.
