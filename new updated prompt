@@ -1,92 +1,167 @@
-Calculation Center: implement ONLY the changes below (Angular + PrimeNG, Spring Boot).
-Everything else stays exactly as it is today: landing page and cards, layout, sidebar,
-colours, fonts, buttons, button positions, readiness check behaviour, stepper and the
-current stage highlighting. Reuse existing services, APIs, polling and entitlements.
+CALCULATION CENTER – ROUND 2 CHANGES (Angular + PrimeNG, Spring Boot)
 
-1. CALCULATION PAGE HEADER
-- Add the calculation's letter monogram (34px rounded tile, same gradient colour as its
-  landing card) to the left of the title.
-- Title shows the name ONCE, with no category tag: "OCI Tax", not "OCI Tax  Tax".
-- Show ONE status tag next to the title (Ready to run / Running / Completed / Failed).
-  Remove any other duplicate status in the header area.
-- Description stays under the title.
+Implement ONLY the changes below. Keep all other layout, behaviour, colours and fonts
+as they are today. Use the application's existing text styles, colours, buttons and
+spacing everywhere so the new parts look native to the app.
 
-2. SCENARIO SELECTOR (DEMO COMMENT)
-- Replace the current scenario dropdown with p-multiSelect display="chip": each
-  selected scenario is a capsule with ✕ (no comma-separated text).
-- Show only scenarios from active cycles (existing active-cycle flag), grouped under
-  "ACTIVE CYCLE · <cycle>", with the filter box.
-- Dropdown footer: "Only scenarios from active cycles are shown."
-- Readiness check on scenario selection stays exactly as today.
+STATUS TAG (use one component everywhere)
+- Small rounded p-tag with a dot + text.
+- Running = blue, Completed / Met = green, Failed = red, Warning = amber,
+  Pending / Not started = grey.
 
-3. CONFIRM BEFORE RUNNING ON UNCHANGED DATA (DEMO COMMENT)
-- If readiness reports "Data Changed Since Last Run" not met, show amber hint
-  "No data change since last run." and make Run open a p-confirmDialog:
-  title "Run on unchanged data?"; text "Data for <scenario> hasn't changed since the
-  last run on <date, time>. Running again replaces the previous results.";
-  required checkbox "I understand this re-runs the calculation on unchanged data.";
-  buttons Cancel / Run anyway ("Run anyway" disabled until ticked).
-- Otherwise Run works as today. Readiness response must include the last run time.
+=====================================================================
+A. LANDING PAGE
+=====================================================================
 
-4. ALL EXECUTION STAGES PRE-POPULATED (DEMO COMMENT)
-- Show all 10 stages in the Execution list as soon as a scenario is ready, before the
-  run starts, in order: Request accepted, Checking readiness, Preparing calculation,
-  Loading calculation data, Running tax calculation, Saving results, Finalizing
-  calculation, Updating workflow, Calculation completed, Email notification.
-- Not-reached stages: grey text, dashed grey circle, "Pending".
-- Completed and current stages keep the existing styling and highlight (green check;
-  current row light blue with spinner and timer).
-- List header: "Execution · <scenario>  <n> of 10 stages completed".
-- Stage list comes from the stage config/API, not hard-coded.
+A1. History panel (popover from the History icon button)
+- Keep it as a popover anchored under the History button (~540px wide), no full-screen
+  mask, closes on ✕ / Esc / outside click.
+- Header: "Calculation history" (14px semibold) + ✕, thin bottom border.
+- Controls row: calculation dropdown (default "All calculations", entitled types only)
+  · 30d / 60d / 90d segmented control (selected = light blue) · search "Scenario or user".
+- Status chips below: All / Running / Completed / Failed (selected = solid blue).
+- Partial load warning as a small amber alert box:
+  "⚠ Some history could not be loaded: <calculations>."
+- Day headers: small (10.5px), bold, uppercase, grey on a light grey bar
+  ("TODAY · 5 NOV", "SUN · 25 OCT").
+- Each row:
+  - 26px calculation monogram
+  - Line 1: "<Calculation> · <scenario>" followed INLINE by the status tag
+  - Line 2 (grey): "<time> · <user> · <duration>"
+  - Right: download icon button for Completed rows
+    (tooltip "Download Post-Tax Segment report")
+- Footer: "<n> runs · last <n> days" (left), "Only calculations you have access to" (right).
 
-5. ERROR VISUALISATION (DEMO COMMENT)
-- Failed stage row: light red background, red ✕, "<stage> — Failed".
-- Inline error box under it (red left border): backend error message,
-  "Reference <error ID> · <time>", links "Copy details" and "Contact SFRM Operations".
-- Later stages stay grey "Pending". Stepper Execution step turns red,
-  "Failed at stage <n>". Header status tag "Failed". Hint: "Calculation failed at
-  "<stage>"." in red.
-- Back end returns per-stage status, message, error message, error ID, timestamps.
-- Use the Capital Planning app's error colours/wording if it has a standard.
+A2. History → click a Completed row
+- Show details inside the SAME popover (same size).
+- Header: "← Run details" + ✕ ("←" returns to the list).
+- Summary line: monogram · "<Calculation> · <scenario>" + status tag inline;
+  grey line "<date> · <start>–<end> · <duration> · <user> · Run <runId>";
+  download icon on the right.
+- Then ONLY the execution steps: header "EXECUTION STEPS · <n> OF 10 COMPLETED" and one
+  row per stage (status icon, stage name, duration).
+- Remove the Run ID / Readiness / Stages boxes and remove the "Open <Calculation>" button.
 
-6. HISTORY: LANDING PAGE ONLY, COMPACT PANEL
-- Keep the History button on the landing page (right end of the All / Tax / Standalone
-  row). No History on calculation pages.
-- Open as p-overlayPanel (p-popover in v18+) anchored under the button with an arrow,
-  about 560px wide, list max ~470px with its own scroll. No full-screen mask; header,
-  sidebar and page stay visible. Closes on ✕, Esc or outside click. It must look like
-  part of the app, not a separate page.
-- Header "Calculation history" + ✕.
-- Controls: calculation type dropdown (default "All calculations"; letter avatar +
-  name; entitled types only) · 30d / 60d / 90d toggle · search (scenario or user).
-- Status chips: All / Running / Completed / Failed.
-- List grouped by day ("TODAY · 4 NOV"), newest first. Row: letter avatar ·
-  "<Calculation> · <scenario>" · grey "<time> · <user> · <duration>" · status tag ·
-  download icon (Completed) or "›" (Running).
-- Footer: "<n> runs · last <n> days" and "Only calculations you have access to".
-- Running row click → opens that calculation page with the scenario selected.
-- Back end: existing history endpoint with calculationTypeId|ALL, days, optional
-  status/search; entitlement filtering server-side; Cache-Control: no-store.
+A3. History download = the same saved Post-Tax Segment report for that run ID
+    (see Backend).
 
-7. COMPLETED RUN DETAILS: SAME COMPACT PANEL
-- Clicking a Completed (or Failed) row replaces the list INSIDE the same popover
-  (same 560px size, no new wide panel):
-  - Header: "←" back to the list, "Run details", ✕.
-  - Monogram · "<Calculation> · <scenario>", grey "<date> · <start>–<end> ·
-    <duration> · <user>", status tag.
-  - Three small boxes: Run ID · Readiness "<n> of 7 met" · Stages "<n> of 10 completed".
-  - "EXECUTION STAGES" compact list: icon, stage name, duration (failed stage in red
-    with its error message).
-  - Buttons: "Download report" (existing download) and "Open <Calculation>".
-- Remove the current wide run-detail panel.
+=====================================================================
+B. NEW / CLASSIC SWITCH (both screens)
+=====================================================================
+Pill button styled like the existing "What's New" button, top-right of the breadcrumb
+row. One shared component with variant 'primary' | 'outline'. Remove the old link/toggle.
 
-8. GENERIC / CONFIG-DRIVEN
-- No calculation-specific code in templates: stages, readiness criteria, active-cycle
-  filter, monogram colours and dialog texts come from config/API.
+- Classic calculation screen → primary:
+  "✦ Try the new Calculation Center →"
+  background linear-gradient(90deg, #1D5FD6 0%, #5B2D9E 55%, #B0246B 100%),
+  white bold text, gold sparkle (#F5B642), shadow 0 4px 12px -4px rgba(91,45,158,.55).
+  Hover: slightly brighter, raise 1px. Click → new Calculation Center.
+- New Calculation Center → outline:
+  "↩ Switch to classic view"
+  white fill, 1.5px gradient border (same gradient), text #5B2D9E, no shadow.
+  Hover: #F6F2FF background. Click → classic screen.
+- Both: height 34px, padding 0 16px, border-radius 999px, 13px, keyboard focus ring.
 
+=====================================================================
+C. CALCULATION SCREEN
+=====================================================================
+
+C1. Scenario selector
+- Selected scenarios stay INSIDE the dropdown field as capsules
+  (p-multiSelect display="chip"), followed by the "Add scenarios" placeholder.
+- Each capsule has its own colour, assigned by selection order (background / text /
+  border):
+  1 blue   #EEF4FF / #1D4FB8 / #C9DAF8
+  2 teal   #E8F7F4 / #0F766E / #B9E6DD
+  3 purple #F3EEFF / #6D28D9 / #DCCEFB
+  4 amber  #FFF4E5 / #9A4A00 / #F6D9AE   (then repeat)
+- While a run is active: capsules show a lock instead of ✕, field read-only.
+
+C2. Scenario persistence (option b)
+- Save the selected scenario(s) AND the last readiness result with its timestamp in
+  sessionStorage, per calculation type.
+- When the user returns, restore both and DO NOT call readiness again.
+  Hint under the selector: "↺ Restored from your last visit. Readiness result from
+  <time>; it re-runs only on Check again, Reset or a new scenario."
+  Readiness header shows "Last checked <time>".
+- Re-run readiness only when the user changes the scenario, clicks Reset or clicks
+  "Check again". (The backend still re-checks readiness when Run is clicked, so a
+  stale cached result can never start an invalid run.)
+
+C3. Reports card
+- Download icon BEFORE each label: "⤓ Pre-Tax Segment", "⤓ Post-Tax Segment".
+- On click: that button shows a spinner + "Generating…" and is disabled; under the
+  buttons show a shimmer bar (light blue animated gradient):
+  "Generating <report> report for <scenario>…".
+- When the file is downloaded: green box "✓ <report> report downloaded." for 4 seconds,
+  then hide. On error: red box with the error message.
+- Post-Tax Segment is enabled after a successful run (see Backend).
+
+C4. Readiness phase
+- Do NOT show the execution stage list during readiness.
+- While checking: only ONE spinner (in the hint "Checking readiness…"). Stepper shows
+  "Readiness · Checking…". Criteria rows show grey name + grey skeleton line, nothing
+  on the right (remove the right-side per-row spinners).
+- When done: Met / Warning tags on the right of each criterion; header shows
+  "<n> Met" and "<n> Warning" tags, "Checked <time>" and a "↻ Check again" button.
+
+C5. Warning dialog "Run on unchanged data?"
+- Header: amber circle "!" icon + title + ✕, bottom border.
+- Body (13px): "Data for <scenario> hasn't changed since the last run. Running again
+  replaces the previous results." Then a grey info box: "Last run  <date time> ·
+  Run <runId>". Then the required checkbox "I understand this re-runs the calculation
+  on unchanged data."
+- Footer on a light grey background, right aligned: Cancel (outlined grey) and
+  Run anyway (primary, disabled until the checkbox is ticked).
+
+C6. Execution phase
+- Show the 10 stages only after Run calculation is clicked / a run is triggered.
+- Stage name 12.5px semibold (bold); message under it 12px normal weight, grey (same
+  as readiness messages); duration on the right in monospace.
+- Current stage: light blue row, blue name, spinner icon, live timer.
+- Pending stages: grey name, "Pending".
+- This styling must apply WHILE running, not only after completion.
+
+C7. Calculation output (Result Aggregation) – same rows, modern table
+- Keep the data exactly as today: one row per Entity / Tax Segment / Reporting Line,
+  columns PQ1…PQn in the same order. No grouping or summaries.
+- Section header: "Result Aggregation · <scenario>" + "<n> rows" tag; right side:
+  search (entity, segment, line), "Run <runId>", Hide data, Segment summary report.
+- Table header: two rows – a year band row (2026 / 2027 / 2028 …, small uppercase
+  grey, spanning its quarter columns) and the column row ("PQ1" bold + "3Q2026" grey).
+  Header stays visible on vertical scroll.
+- Freeze Entity, Tax Segment and Reporting Line on horizontal scroll (p-table frozen
+  columns) with a thin right border and soft shadow; visible horizontal scrollbar.
+- Reporting Line shown as a small grey label (EBT / ETR / LLR / Taxes).
+- Numbers right aligned, monospace, negatives in red (#B4233C), values as returned.
+- Rows 34px, zebra striping, thin dividers, light blue hover, thin vertical divider
+  between years.
+- Paginator below: "Rows per page" dropdown with 100 / 150 / 200 / 250
+  (default 150), "Showing x–y of n", page buttons. Keep the choice for the session.
+- No full-screen view for now.
+
+=====================================================================
+D. BACKEND
+=====================================================================
+D1. After every successful run, generate the Post-Tax Segment report and save it to
+    /home/frm/App-Data/FRM-bpst/tce/calculation (path from configuration).
+D2. File name: <calculation_type>_<run_id>.xlsx
+D3. Availability: enable the Post-Tax Segment button after run completion. The
+    Post-Tax Segment button and the History download both fetch the SAME saved file by
+    run ID. If the file is missing, regenerate it once, then serve it.
+D4. Report content: Run ID, Calculation Type, Scenario Name, Run Date and Time, data rows.
+D5. Download endpoint keyed by runId; enforce entitlements; clear 404 message when a
+    run has no report.
+D6. Readiness response includes the last run date/time and run ID (for C5).
+
+=====================================================================
 DONE WHEN
-- Only items 1–8 changed; everything else looks and behaves as before.
-- Tests: active-cycle filtering, unchanged-data dialog gating, 10 stages shown before
-  and during a run, failed-stage rendering, header has no duplicate tag/status,
-  history filters + entitlements, run details open inside the same popover.
-- Build, lint and existing tests pass. Report what you ran and any back-end fields added.
+=====================================================================
+- Every item above works; nothing else changed.
+- Tests cover: history popover + run details showing only steps; history download =
+  Post-Tax Segment file for that run ID; switch component variants; capsule colours;
+  persistence (restore without readiness call; re-check on change / Reset / Check
+  again); report generating / success / error states; single spinner in readiness;
+  stages hidden until Run; running-state stage styling; paginator options
+  100/150/200/250 with default 150; frozen columns.
+- Build, lint and existing tests pass. Report what you ran and any API fields added.
