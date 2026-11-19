@@ -202,3 +202,45 @@ Body content:
 - Unit tests for: state derivation, default tab selection, add/remove behaviour,
   Run enable rules, dialog content for 1/2/3 scenarios and checkbox gating.
 - Build, lint and existing tests pass. Report what you ran and any API fields added.
+
+
+course
+
+Here are all your subjects, taken from the UCM transcript image and the consolidated JNTUH marks memo in your PDF.
+
+## Master's: University of Central Missouri, M.S. Computer Science (GPA 3.60)
+
+**Spring 2020**
+- CS 5200: Database Theory & Applications (B)
+- CS 5900: Compiler Design & Construction (B)
+- CS 4150: Object-Oriented Programming & Data Structures (B). This one is listed as an undergraduate-level course on a separate record.
+
+**Summer 2020**
+- CS 5220: Advanced Application Programming in Java (A)
+- CS 5300: Advanced Algorithms (A)
+- CS 5500: Advanced Operating Systems (A)
+- CS 5600: Advanced Database Systems (A)
+
+**Fall 2020**
+- CS 5110: Advanced Application Programming in C# & .NET (A)
+- CS 5620: Big Data: Storage, Analytics & Visualization (B)
+- CS 5630: Data Mining (B)
+
+**Spring 2021**
+- CS 5020: Internship in CS (A)
+
+## Bachelor's: JNTU Hyderabad, B.Tech in Electronics & Communication Engineering (2015–2019, First Class, 64.72%)
+
+**I Year:** English, Mathematics-I, Mathematical Methods, Engineering Physics, Engineering Chemistry, Computer Programming, Engineering Drawing, Computer Programming Lab, Engineering Physics & Chemistry Lab, English Language Communication Skills Lab, IT Workshop / Engineering Workshop
+
+**II Year, Sem I:** Mathematics-III, Probability Theory & Stochastic Processes, Switching Theory & Logic Design, Electrical Circuits, Electronic Devices & Circuits, Signals & Systems, EDC Lab, Basic Simulation Lab
+
+**II Year, Sem II:** Principles of Electrical Engineering, Electronic Circuit Analysis, Pulse & Digital Circuits, Environmental Studies, Electromagnetic Theory & Transmission Lines, Digital Design using Verilog HDL, Electrical Technology Lab, Electronic Circuits & Pulse Circuits Lab, Gender Sensitization
+
+**III Year, Sem I:** Control Systems Engineering, Computer Organization & Operating Systems, Antennas & Wave Propagation, Electronic Measurements & Instrumentation, Analog Communications, Linear & Digital IC Applications, Analog Communications Lab, IC Applications & HDL Simulation Lab
+
+**III Year, Sem II:** Managerial Economics & Financial Analysis, Intellectual Property Rights, Digital Communications, VLSI Design, Microprocessors & Microcontrollers, Digital Signal Processing, Microprocessors & Microcontrollers Lab, DSP Lab
+
+**IV Year, Sem I:** Management Science, Microwave Engineering, Computer Networks, Cellular & Mobile Communications, Digital Image Processing, Embedded Systems Design, Advanced Communication Skills Lab, Microwave Engineering & Digital Communications Lab
+
+**IV Year, Sem II:** Satellite Communications, Radar Systems, Wireless Communications & Networks, Industry Oriented Mini Project, Seminar, Major Project, Comprehensive Viva
